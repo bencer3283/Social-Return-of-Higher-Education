@@ -24,7 +24,11 @@ CITY$graduate109 <- as.numeric(CITY$graduate109)
 ```
 
 # SLR
-```{R, results=}
+```{R}
 slr <- lm(CITY$wage109 ~ CITY$graduate109, )
 summary(slr)
+```
+
+```{R}
+plot(CITY$graduate109, CITY$wage109)
 ```
