@@ -8,6 +8,8 @@ output:
 ```{R, warning=FALSE, results='hide', message=FALSE}
 library(knitr)
 library(readxl)
+library(stargazer)
+library(lmtest)
 ```
 
 # Import Data
@@ -24,9 +26,10 @@ CITY$graduate109 <- as.numeric(CITY$graduate109)
 ```
 
 # SLR
-```{R}
+```{R, results='hold'}
 slr <- lm(CITY$wage109 ~ CITY$graduate109, )
 summary(slr)
+#stargazer(slr)
 ```
 
 ```{R}
@@ -34,3 +37,15 @@ plot(CITY$graduate109, CITY$wage109, main="2020 City Data", xlab="No. of Graduat
 text(CITY$graduate109[c(8,19)], CITY$wage109[c(8,19)], labels = c("Hsinchu County", "Hsinchu City"), cex = 0.6, pos = 4)
 abline(slr)
 ```
+
+# MLR
+
+# Heteroskedaticity
+
+## Test
+We use the White Test for heteroskedaticity by specifying a formula with interaction term and sqaure term to the BP Test.
+```{R}
+bptest(slr, ~ CITY$graduate109 + I(CITY$graduate109^2))
+```
+Heteroskedaticity doesn't seem present.
+## Robust

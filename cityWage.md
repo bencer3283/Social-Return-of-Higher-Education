@@ -4,6 +4,8 @@ Workplace Wage by City
 ``` r
 library(knitr)
 library(readxl)
+library(stargazer)
+library(lmtest)
 ```
 
 # Import Data
@@ -24,6 +26,7 @@ CITY$graduate109 <- as.numeric(CITY$graduate109)
 ``` r
 slr <- lm(CITY$wage109 ~ CITY$graduate109, )
 summary(slr)
+#stargazer(slr)
 ```
 
     ## 
@@ -52,3 +55,24 @@ abline(slr)
 ```
 
 ![](cityWage_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+# MLR
+
+# Heteroskedaticity
+
+## Test
+
+We use the White Test for heteroskedaticity by specifying a formula with
+interaction term and sqaure term to the BP Test.
+
+``` r
+bptest(slr, ~ CITY$graduate109 + I(CITY$graduate109^2))
+```
+
+    ## 
+    ##  studentized Breusch-Pagan test
+    ## 
+    ## data:  slr
+    ## BP = 0.08701, df = 2, p-value = 0.9574
+
+Heteroskedaticity doesn’t seem present. \#\# Robust
