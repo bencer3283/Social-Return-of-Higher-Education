@@ -1,0 +1,30 @@
+---
+title: Workplace Wage by City
+output: 
+    github_document:
+        toc: true
+---
+
+```{R}
+library(knitr)
+library(readxl)
+```
+
+# Import Data
+
+```{R}
+rawGraduate <- read_excel("109cityu.xls")
+rawWage <- read_excel("workplaceWageCity.xlsx")
+```
+
+```{R}
+CITY <- cbind(rawWage["...1"], rawWage["109"], rawGraduate$...10[5:24])
+colnames(CITY) <- c("city", "wage109", "graduate109")
+CITY$graduate109 <- as.numeric(CITY$graduate109)
+```
+
+# SLR
+```{R, results=}
+slr <- lm(CITY$wage109 ~ CITY$graduate109, )
+summary(slr)
+```
