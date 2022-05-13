@@ -5,14 +5,14 @@ output:
         toc: true
 ---
 
-```{R}
+```{R, warning=FALSE, results='hide', message=FALSE}
 library(knitr)
 library(readxl)
 ```
 
 # Import Data
 
-```{R}
+```{R, warning=FALSE, results='hide', message=FALSE}
 rawGraduate <- read_excel("109cityu.xls")
 rawWage <- read_excel("workplaceWageCity.xlsx")
 ```
@@ -30,5 +30,7 @@ summary(slr)
 ```
 
 ```{R}
-plot(CITY$graduate109, CITY$wage109)
+plot(CITY$graduate109, CITY$wage109, main="2020 City Data", xlab="No. of Graduate", ylab="Average yearly wage ($10,000)")
+text(CITY$graduate109[c(8,19)], CITY$wage109[c(8,19)], labels = c("Hsinchu County", "Hsinchu City"), cex = 0.6, pos = 4)
+abline(slr)
 ```

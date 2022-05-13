@@ -10,23 +10,8 @@ library(readxl)
 
 ``` r
 rawGraduate <- read_excel("109cityu.xls")
-```
-
-    ## New names:
-    ## * `` -> ...2
-    ## * `` -> ...3
-    ## * `` -> ...4
-    ## * `` -> ...5
-    ## * `` -> ...6
-    ## * ...
-
-``` r
 rawWage <- read_excel("workplaceWageCity.xlsx")
 ```
-
-    ## New names:
-    ## * `` -> ...1
-    ## * `` -> ...5
 
 ``` r
 CITY <- cbind(rawWage["...1"], rawWage["109"], rawGraduate$...10[5:24])
@@ -61,7 +46,9 @@ summary(slr)
     ## F-statistic: 2.359 on 1 and 18 DF,  p-value: 0.142
 
 ``` r
-plot(CITY$graduate109, CITY$wage109)
+plot(CITY$graduate109, CITY$wage109, main="2020 City Data", xlab="No. of Graduate", ylab="Average yearly wage ($10,000)")
+text(CITY$graduate109[c(8,19)], CITY$wage109[c(8,19)], labels = c("Hsinchu County", "Hsinchu City"), cex = 0.6, pos = 4)
+abline(slr)
 ```
 
 ![](cityWage_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
