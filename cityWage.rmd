@@ -7,10 +7,11 @@ output:
 
 ```{R, warning=FALSE, results='hide', message=FALSE}
 library(knitr)
-library(readxl)
-library(stargazer)
-library(lmtest)
-library(data.table)
+library(readxl) #for reading Excel file
+library(stargazer) #for Latex table generation
+library(lmtest) #for heteroskedaticity test
+library(data.table) #for transpose() function
+library(ivreg)
 ```
 
 # Import Data
@@ -31,7 +32,7 @@ CITY <- cbind(CITY, direct)
 rm(direct)
 ```
 
-## Workforce Data
+## Data manipulation 
 
 ```{R, echo=FALSE, results='hide'}
 workforceTranspose <- function(name, start, end) {
@@ -44,12 +45,15 @@ workforceTranspose <- function(name, start, end) {
     }
     return(CITY)
 }
+```
 
+```{R}
 CITY <- workforceTranspose("workforceCollege", 3, 14)
 CITY <- workforceTranspose("workforceYoung", 16, 27)
 CITY <- workforceTranspose("workforceMiddle", 29, 40)
 CITY <- workforceTranspose("workforceOld", 42, 53)
 CITY <- workforceTranspose("workforceRetired", 55, 66)
+summary(CITY)
 ```
 
 # SLR with college graduates number
@@ -78,15 +82,37 @@ text(CITY$workforceCollege_2020[c(8,19)], CITY$wage2020[c(8,19)], labels = c("Hs
 abline(slr2)
 ```
 
-# MLR
+## Heteroskedaticity
 
-# Heteroskedaticity
-
-## Test
+### Test
 We use the White Test for heteroskedaticity by specifying a formula with interaction term and sqaure term to the BP Test.
 ```{R}
 bptest(slr2, ~ CITY$workforceCollege_2020 + I(CITY$workforceCollege_2020^2))
 ```
 Heteroskedaticity doesn't seem present.
 
-## Robust
+### Robust
+
+# MLR
+```{R, results='hold'}
+mlr <- lm(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018, )
+summary(mlr)
+#stargazer(mlr)
+```
+
+## Heteroskedaticity
+
+### Test
+We use the White Test for heteroskedaticity by specifying a formula with interaction term and sqaure term to the BP Test.
+```{R}
+bptest(mlr, ~ CITY$workforceCollege_2020 + CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + I(CITY$workforceCollege_2020^2) + I(CITY$wage2018^2) + I(CITY$workforceCollege_2020*CITY$wage2018))
+```
+Heteroskedaticity doesn't seem present.
+
+### Robust
+
+## Instrumental variable: workforce age structure
+```{R}
+IVmlr <- ivreg(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 | CITY$workforceMiddle_2010 + CITY$workforceOld_2010)
+summary(IVmlr)
+```
