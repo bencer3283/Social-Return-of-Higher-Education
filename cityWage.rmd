@@ -24,21 +24,31 @@ rawWorkforce <- read_excel("cityWorkforce.xlsx")
 ```{R}
 CITY <- cbind(rawWage["...1"], rawWage["109"], rawWage["108"], rawWage["107"], rawGraduate$...10[5:24])
 colnames(CITY) <- c("city", "wage2020", "wage2019", "wage2018", "graduate2020")
-CITY$graduate109 <- as.numeric(CITY$graduate109)
+CITY$graduate2020 <- as.numeric(CITY$graduate2020)
 direct <- seq(0, 0, length.out = 20)
 direct[1:6] <- 1
 CITY <- cbind(CITY, direct)
+rm(direct)
 ```
 
 ## Workforce Data
 
 ```{R, echo=FALSE, results='hide'}
-year <- 2010
-for(n in 3:14){
-    CITY <- cbind(CITY, transpose(rawWorkforce[n, 4:23]))
-    colnames(CITY)[ncol(CITY)] <- paste("workforceCollege", year)
-    year <- year + 1
+workforceTranspose <- function(name, start, end) {
+    year <- 2010
+    for(n in start:end){
+        CITY <- cbind(CITY, transpose(rawWorkforce[n, 4:23]))
+        colnames(CITY)[ncol(CITY)] <- paste(name, year)
+        year <- year + 1
+    }
+    return(CITY)
 }
+
+CITY <- workforceTranspose("workforceCollege", 3, 14)
+CITY <- workforceTranspose("workforceYoung", 16, 27)
+CITY <- workforceTranspose("workforceMiddle", 29, 40)
+CITY <- workforceTranspose("workforceOld", 42, 53)
+CITY <- workforceTranspose("workforceRetired", 55, 66)
 ```
 
 # SLR
