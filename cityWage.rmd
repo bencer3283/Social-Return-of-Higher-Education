@@ -38,7 +38,8 @@ workforceTranspose <- function(name, start, end) {
     year <- 2010
     for(n in start:end){
         CITY <- cbind(CITY, transpose(rawWorkforce[n, 4:23]))
-        colnames(CITY)[ncol(CITY)] <- paste(name, year)
+        colnames(CITY)[ncol(CITY)] <- paste(name, year, sep = "_")
+        CITY[ncol(CITY)] <- as.numeric(unlist(CITY[ncol(CITY)]))
         year <- year + 1
     }
     return(CITY)
@@ -51,17 +52,30 @@ CITY <- workforceTranspose("workforceOld", 42, 53)
 CITY <- workforceTranspose("workforceRetired", 55, 66)
 ```
 
-# SLR
+# SLR with college graduates number
 ```{R, results='hold'}
-slr <- lm(CITY$wage109 ~ CITY$graduate109, )
+slr <- lm(CITY$wage2020 ~ CITY$graduate2020, )
 summary(slr)
 #stargazer(slr)
 ```
 
 ```{R}
-plot(CITY$graduate109, CITY$wage109, main="2020 City Data", xlab="No. of Graduate", ylab="Average yearly wage ($10,000)")
-text(CITY$graduate109[c(8,19)], CITY$wage109[c(8,19)], labels = c("Hsinchu County", "Hsinchu City"), cex = 0.6, pos = 4)
+plot(CITY$graduate2020, CITY$wage2020, main="2020 City Data", xlab="No. of Graduate", ylab="Average yearly wage ($10,000)")
+text(CITY$graduate2020[c(8,19)], CITY$wage2020[c(8,19)], labels = c("Hsinchu County", "Hsinchu City"), cex = 0.6, pos = 4)
 abline(slr)
+```
+
+# SLR with college worker share
+```{R, results='hold'}
+slr2 <- lm(CITY$wage2020 ~ CITY$workforceCollege_2020, )
+summary(slr2)
+#stargazer(slr2)
+```
+
+```{R}
+plot(CITY$workforceCollege_2020, CITY$wage2020, main="2020 City Data", xlab="Share of college worker (%)", ylab="Average yearly wage ($10,000)")
+text(CITY$workforceCollege_2020[c(8,19)], CITY$wage2020[c(8,19)], labels = c("Hsinchu County", "Hsinchu City"), cex = 0.6, pos = 4)
+abline(slr2)
 ```
 
 # MLR
@@ -71,7 +85,7 @@ abline(slr)
 ## Test
 We use the White Test for heteroskedaticity by specifying a formula with interaction term and sqaure term to the BP Test.
 ```{R}
-bptest(slr, ~ CITY$graduate109 + I(CITY$graduate109^2))
+bptest(slr2, ~ CITY$workforceCollege_2020 + I(CITY$workforceCollege_2020^2))
 ```
 Heteroskedaticity doesn't seem present.
 
