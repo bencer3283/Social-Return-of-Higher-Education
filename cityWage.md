@@ -7,7 +7,8 @@ library(readxl) #for reading Excel file
 library(stargazer) #for Latex table generation
 library(lmtest) #for heteroskedaticity test
 library(data.table) #for transpose() function
-library(ivreg)
+library(ivreg) #for instrumental variable 2SLS regression
+library(dplyr)
 ```
 
 # Import Data
@@ -372,3 +373,19 @@ summary(IVmlr)
     ## Residual standard error: 233.6 on 17 degrees of freedom
     ## Multiple R-Squared: -330.4,  Adjusted R-squared: -369.3 
     ## Wald test: 0.006003 on 2 and 17 DF,  p-value: 0.994
+
+# First difference panel data
+
+## Construct difference term
+
+``` r
+CITY <- mutate(CITY, wageDiff1 = wage2020-wage2019, 
+wageDiff2 = wage2019-wage2018, 
+workforceCollegeDiff1 = workforceCollege_2020 - workforceCollege_2019, 
+workforceCollegeDiff2 = workforceCollege_2019 - workforceCollege_2018)
+```
+
+``` r
+CITY$wageDiff1 <- c(CITY$wageDiff1, CITY$wageDiff2)
+CITY$workforceCollegeDiff1 <- c(CITY$workforceCollegeDiff1, CITY$workforceCollegeDiff2) 
+```

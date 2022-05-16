@@ -11,7 +11,8 @@ library(readxl) #for reading Excel file
 library(stargazer) #for Latex table generation
 library(lmtest) #for heteroskedaticity test
 library(data.table) #for transpose() function
-library(ivreg)
+library(ivreg) #for instrumental variable 2SLS regression
+library(dplyr)
 ```
 
 # Import Data
@@ -116,3 +117,18 @@ Heteroskedaticity doesn't seem present.
 IVmlr <- ivreg(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 | CITY$workforceMiddle_2010 + CITY$workforceOld_2010)
 summary(IVmlr)
 ```
+
+# First difference panel data
+
+## Construct difference term
+```{R}
+CITY <- mutate(CITY, wageDiff1 = wage2020-wage2019, 
+wageDiff2 = wage2019-wage2018, 
+workforceCollegeDiff1 = workforceCollege_2020 - workforceCollege_2019, 
+workforceCollegeDiff2 = workforceCollege_2019 - workforceCollege_2018)
+```
+```{R, eval = FALSE}
+CITY$wageDiff1 <- c(CITY$wageDiff1, CITY$wageDiff2)
+CITY$workforceCollegeDiff1 <- c(CITY$workforceCollegeDiff1, CITY$workforceCollegeDiff2) 
+```
+
