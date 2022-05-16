@@ -10,6 +10,7 @@ library(knitr)
 library(readxl)
 library(stargazer)
 library(lmtest)
+library(data.table)
 ```
 
 # Import Data
@@ -17,12 +18,27 @@ library(lmtest)
 ```{R, warning=FALSE, results='hide', message=FALSE}
 rawGraduate <- read_excel("109cityu.xls")
 rawWage <- read_excel("workplaceWageCity.xlsx")
+rawWorkforce <- read_excel("cityWorkforce.xlsx")
 ```
 
 ```{R}
-CITY <- cbind(rawWage["...1"], rawWage["109"], rawGraduate$...10[5:24])
-colnames(CITY) <- c("city", "wage109", "graduate109")
+CITY <- cbind(rawWage["...1"], rawWage["109"], rawWage["108"], rawWage["107"], rawGraduate$...10[5:24])
+colnames(CITY) <- c("city", "wage2020", "wage2019", "wage2018", "graduate2020")
 CITY$graduate109 <- as.numeric(CITY$graduate109)
+direct <- seq(0, 0, length.out = 20)
+direct[1:6] <- 1
+CITY <- cbind(CITY, direct)
+```
+
+## Workforce Data
+
+```{R, echo=FALSE, results='hide'}
+year <- 2010
+for(n in 3:14){
+    CITY <- cbind(CITY, transpose(rawWorkforce[n, 4:23]))
+    colnames(CITY)[ncol(CITY)] <- paste("workforceCollege", year)
+    year <- year + 1
+}
 ```
 
 # SLR
@@ -48,4 +64,5 @@ We use the White Test for heteroskedaticity by specifying a formula with interac
 bptest(slr, ~ CITY$graduate109 + I(CITY$graduate109^2))
 ```
 Heteroskedaticity doesn't seem present.
+
 ## Robust
