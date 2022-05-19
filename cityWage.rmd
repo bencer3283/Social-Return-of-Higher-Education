@@ -21,6 +21,7 @@ library(dplyr)
 rawGraduate <- read_excel("109cityu.xls")
 rawWage <- read_excel("workplaceWageCity.xlsx")
 rawWorkforce <- read_excel("cityWorkforce.xlsx")
+rawCityAddition <- read_excel("additionalCityData.xlsx")
 ```
 
 ```{R}
@@ -54,7 +55,26 @@ CITY <- workforceTranspose("workforceYoung", 16, 27)
 CITY <- workforceTranspose("workforceMiddle", 29, 40)
 CITY <- workforceTranspose("workforceOld", 42, 53)
 CITY <- workforceTranspose("workforceRetired", 55, 66)
-summary(CITY)
+```
+
+```{R}
+for(i in 2:ncol(rawCityAddition)) {
+    if(!is.na(rawCityAddition[2, i])){
+        CITY <- cbind(CITY, rawCityAddition[1:20, i])
+    }   
+}
+```
+```{R}
+colnames(CITY)[67:69] <- c("hired2018", "hired2019", "hired2020")
+colnames(CITY)[71:73] <- c("workforcePopulation2018", "workforcePopulation2019", "workforcePopulation2020")
+colnames(CITY)[75:77] <- c("gender2018", "gender2019", "gender2020")
+colnames(CITY)[79:81] <- c("manufecture2018", "manufecture2019", "manufecture2020")
+colnames(CITY)[83:85] <- c("service2018", "service2019", "service2020")
+colnames(CITY)[87:89] <- c("eduExpense2018", "eduExpense2019", "eduExpense2020")
+colnames(CITY)[91:93] <- c("married2018", "married2019", "married2020")
+colnames(CITY)[95:97] <- c("eduLevel2018", "eduLevel2019", "eduLevel2020")
+colnames(CITY)[99:101] <- c("expensePerCapita2018", "expensePerCapita2019", "expensePerCapita2020")
+colnames(CITY)[103:105] <- c("unemployment2018", "unemployment2019", "unemployment2020")
 ```
 
 # SLR with college graduates number
@@ -101,6 +121,26 @@ summary(mlr)
 #stargazer(mlr)
 ```
 
+```{R, results="hold"}
+mlr2 <- lm(wage2020 ~ workforceCollege_2020 + direct + hired2020 + manufecture2020 + service2020 + gender2020 + eduExpense2020 + eduLevel2020 + married2020 + expensePerCapita2020 + unemployment2020 ,data = CITY)
+summary(mlr2)
+bptest(mlr2)
+```
+
+## F-test for educational variable
+```{R, results='hold'}
+edu <- lm(wage2020 ~ workforceCollege_2020 + eduExpense2020 + eduLevel2020, data = CITY)
+summary(edu)
+```
+
+## Use educational expense as main explanatory
+```{R}
+eduexpense <- lm(wage2020 ~ direct + manufecture2020 + eduExpense2020 + wage2018, data = CITY)
+summary(eduexpense)
+bptest(eduexpense)
+
+```
+
 ## Heteroskedaticity
 
 ### Test
@@ -127,8 +167,13 @@ wageDiff2 = wage2019-wage2018,
 workforceCollegeDiff1 = workforceCollege_2020 - workforceCollege_2019, 
 workforceCollegeDiff2 = workforceCollege_2019 - workforceCollege_2018)
 ```
-```{R, eval = FALSE}
-CITY$wageDiff1 <- c(CITY$wageDiff1, CITY$wageDiff2)
-CITY$workforceCollegeDiff1 <- c(CITY$workforceCollegeDiff1, CITY$workforceCollegeDiff2) 
+```{R}
+wageDiff <- c(CITY$wageDiff1, CITY$wageDiff2)
+workforceCollegeDiff <- c(CITY$workforceCollegeDiff1, CITY$workforceCollegeDiff2) 
+direct2 <- c(CITY$direct, CITY$direct)
 ```
 
+```{R}
+plm <- lm(wageDiff ~ workforceCollegeDiff + direct2)
+summary(plm)
+```
