@@ -735,32 +735,32 @@ body {
 <p>Heteroskedaticity doesn’t seem present.</p>
 <h3 id="robust">Robust</h3>
 <h1 id="mlr">MLR</h1>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">mlr &lt;-<span class="st"> </span><span class="kw">lm</span>(CITY<span class="op">$</span>wage2020 <span class="op">~</span><span class="st"> </span>CITY<span class="op">$</span>workforceCollege_<span class="dv">2020</span> <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>direct <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>wage2018 <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>service2020 <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>hired2020, )</a>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">mlr &lt;-<span class="st"> </span><span class="kw">lm</span>(CITY<span class="op">$</span>wage2020 <span class="op">~</span><span class="st"> </span>CITY<span class="op">$</span>workforceCollege_<span class="dv">2020</span> <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>direct <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>wage2018 <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>manufecture2020 <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>hired2020, )</a>
 <a class="sourceLine" id="cb18-2" title="2"><span class="kw">summary</span>(mlr)</a>
 <a class="sourceLine" id="cb18-3" title="3"><span class="co">#stargazer(mlr)</span></a></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + 
-##     CITY$wage2018 + CITY$service2020 + CITY$hired2020)
+##     CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020)
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -0.95032 -0.37654 -0.03503  0.32385  1.46467 
+## -0.99226 -0.36933 -0.01989  0.35062  1.45209 
 ## 
 ## Coefficients:
 ##                            Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)                -0.53646    2.17863  -0.246   0.8091    
-## CITY$workforceCollege_2020  0.08334    0.03240   2.573   0.0221 *  
-## CITY$direct                -0.23074    0.41672  -0.554   0.5885    
-## CITY$wage2018               1.01220    0.02260  44.795   &lt;2e-16 ***
-## CITY$service2020           -0.02740    0.02215  -1.237   0.2366    
-## CITY$hired2020             -0.01084    0.03285  -0.330   0.7462    
+## (Intercept)                -1.25935    2.00540  -0.628   0.5401    
+## CITY$workforceCollege_2020  0.07512    0.02882   2.606   0.0207 *  
+## CITY$direct                -0.19412    0.41273  -0.470   0.6454    
+## CITY$wage2018               1.01685    0.02115  48.086   &lt;2e-16 ***
+## CITY$manufecture2020        0.02534    0.02161   1.173   0.2605    
+## CITY$hired2020             -0.03220    0.03756  -0.857   0.4057    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 0.6857 on 14 degrees of freedom
+## Residual standard error: 0.6892 on 14 degrees of freedom
 ## Multiple R-squared:  0.9976, Adjusted R-squared:  0.9968 
-## F-statistic:  1188 on 5 and 14 DF,  p-value: &lt; 2.2e-16
+## F-statistic:  1176 on 5 and 14 DF,  p-value: &lt; 2.2e-16
 </code></pre>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1">mlr2 &lt;-<span class="st"> </span><span class="kw">lm</span>(wage2020 <span class="op">~</span><span class="st"> </span>workforceCollege_<span class="dv">2020</span> <span class="op">+</span><span class="st"> </span>direct <span class="op">+</span><span class="st"> </span>hired2020 <span class="op">+</span><span class="st"> </span>manufecture2020 <span class="op">+</span><span class="st"> </span>service2020 <span class="op">+</span><span class="st"> </span>gender2020 <span class="op">+</span><span class="st"> </span>eduExpense2020 <span class="op">+</span><span class="st"> </span>eduLevel2020 <span class="op">+</span><span class="st"> </span>married2020 <span class="op">+</span><span class="st"> </span>expensePerCapita2020 <span class="op">+</span><span class="st"> </span>unemployment2020 <span class="op">+</span><span class="st"> </span>directEdu ,<span class="dt">data =</span> CITY)</a>
 <a class="sourceLine" id="cb20-2" title="2"><span class="kw">summary</span>(mlr2)</a>
@@ -828,70 +828,70 @@ body {
 ## F-statistic: 5.889 on 3 and 16 DF,  p-value: 0.006598
 </code></pre>
 <h2 id="use-educational-level-as-main-explanatory">Use educational level as main explanatory</h2>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1">edulevel &lt;-<span class="st"> </span><span class="kw">lm</span>(wage2020 <span class="op">~</span><span class="st"> </span>direct <span class="op">+</span><span class="st"> </span>service2020 <span class="op">+</span><span class="st"> </span>eduLevel2020 <span class="op">+</span><span class="st"> </span>hired2020 <span class="op">+</span><span class="st"> </span>wage2018, <span class="dt">data =</span> CITY)</a>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1">edulevel &lt;-<span class="st"> </span><span class="kw">lm</span>(wage2020 <span class="op">~</span><span class="st"> </span>direct <span class="op">+</span><span class="st"> </span>manufecture2020 <span class="op">+</span><span class="st"> </span>eduLevel2020 <span class="op">+</span><span class="st"> </span>hired2020 <span class="op">+</span><span class="st"> </span>wage2018, <span class="dt">data =</span> CITY)</a>
 <a class="sourceLine" id="cb24-2" title="2"><span class="kw">summary</span>(edulevel)</a>
 <a class="sourceLine" id="cb24-3" title="3"><span class="kw">bptest</span>(edulevel)</a>
-<a class="sourceLine" id="cb24-4" title="4">edulevelrob &lt;-<span class="st"> </span><span class="kw">lmrob</span>(wage2020 <span class="op">~</span><span class="st"> </span>direct <span class="op">+</span><span class="st"> </span>service2020 <span class="op">+</span><span class="st"> </span>eduLevel2020 <span class="op">+</span><span class="st"> </span>hired2020 <span class="op">+</span><span class="st"> </span>wage2018, <span class="dt">data =</span> CITY)</a>
+<a class="sourceLine" id="cb24-4" title="4">edulevelrob &lt;-<span class="st"> </span><span class="kw">lmrob</span>(wage2020 <span class="op">~</span><span class="st"> </span>direct <span class="op">+</span><span class="st"> </span>manufecture2020 <span class="op">+</span><span class="st"> </span>eduLevel2020 <span class="op">+</span><span class="st"> </span>hired2020 <span class="op">+</span><span class="st"> </span>wage2018, <span class="dt">data =</span> CITY)</a>
 <a class="sourceLine" id="cb24-5" title="5"><span class="kw">summary</span>(edulevelrob)</a></code></pre></div>
 <pre><code>## 
 ## Call:
-## lm(formula = wage2020 ~ direct + service2020 + eduLevel2020 + 
+## lm(formula = wage2020 ~ direct + manufecture2020 + eduLevel2020 + 
 ##     hired2020 + wage2018, data = CITY)
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -0.97335 -0.35073 -0.01329  0.30765  1.57278 
+## -1.00812 -0.34616 -0.02858  0.28334  1.55342 
 ## 
 ## Coefficients:
-##               Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  -1.441606   1.973906  -0.730   0.4772    
-## direct       -0.357050   0.427986  -0.834   0.4181    
-## service2020  -0.023037   0.020429  -1.128   0.2784    
-## eduLevel2020  0.076332   0.028279   2.699   0.0173 *  
-## hired2020     0.008742   0.030650   0.285   0.7797    
-## wage2018      1.011406   0.022118  45.727   &lt;2e-16 ***
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     -1.96671    1.87630  -1.048   0.3123    
+## direct          -0.32164    0.42148  -0.763   0.4581    
+## manufecture2020  0.02228    0.02038   1.093   0.2927    
+## eduLevel2020     0.07080    0.02573   2.752   0.0156 *  
+## hired2020       -0.01174    0.03253  -0.361   0.7235    
+## wage2018         1.01497    0.02091  48.551   &lt;2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 0.6749 on 14 degrees of freedom
+## Residual standard error: 0.6766 on 14 degrees of freedom
 ## Multiple R-squared:  0.9977, Adjusted R-squared:  0.9969 
-## F-statistic:  1226 on 5 and 14 DF,  p-value: &lt; 2.2e-16
+## F-statistic:  1220 on 5 and 14 DF,  p-value: &lt; 2.2e-16
 ## 
 ## 
 ##  studentized Breusch-Pagan test
 ## 
 ## data:  edulevel
-## BP = 11.471, df = 5, p-value = 0.0428
+## BP = 11.97, df = 5, p-value = 0.0352
 ## 
 ## 
 ## Call:
-## lmrob(formula = wage2020 ~ direct + service2020 + eduLevel2020 + hired2020 + 
+## lmrob(formula = wage2020 ~ direct + manufecture2020 + eduLevel2020 + hired2020 + 
 ##     wage2018, data = CITY)
 ##  \--&gt; method = &quot;MM&quot;
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -0.76800 -0.25666  0.06608  0.30935  2.38043 
+## -0.84669 -0.26122  0.05761  0.30488  2.38793 
 ## 
 ## Coefficients:
-##               Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)   0.148985   1.668662   0.089 0.930121    
-## direct       -0.127239   0.161105  -0.790 0.442821    
-## service2020  -0.012551   0.016709  -0.751 0.465019    
-## eduLevel2020  0.085596   0.016746   5.111 0.000158 ***
-## hired2020    -0.010205   0.021381  -0.477 0.640515    
-## wage2018      0.989776   0.007188 137.693  &lt; 2e-16 ***
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     -0.247531   1.673355  -0.148 0.884512    
+## direct          -0.106571   0.212691  -0.501 0.624114    
+## manufecture2020  0.008061   0.020700   0.389 0.702825    
+## eduLevel2020     0.079934   0.015475   5.165 0.000143 ***
+## hired2020       -0.017022   0.040924  -0.416 0.683764    
+## wage2018         0.992269   0.009169 108.224  &lt; 2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Robust residual standard error: 0.4012 
+## Robust residual standard error: 0.3719 
 ## Multiple R-squared:  0.9988, Adjusted R-squared:  0.9984 
-## Convergence in 17 IRWLS iterations
+## Convergence in 19 IRWLS iterations
 ## 
 ## Robustness weights: 
 ##  observation 8 is an outlier with |weight| = 0 ( &lt; 0.005); 
 ##  The remaining 19 ones are summarized as
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.6939  0.9187  0.9612  0.9255  0.9823  0.9986 
+##  0.5836  0.9200  0.9542  0.9114  0.9736  0.9979 
 ## Algorithmic parameters: 
 ##        tuning.chi                bb        tuning.psi        refine.tol 
 ##         1.548e+00         5.000e-01         4.685e+00         1.000e-07 
@@ -917,41 +917,42 @@ body {
 ##  studentized Breusch-Pagan test
 ## 
 ## data:  mlr
-## BP = 10.357, df = 5, p-value = 0.06573
+## BP = 10.854, df = 5, p-value = 0.05435
 </code></pre>
 <p>Heteroskedaticity doesn’t seem present.</p>
 <h3 id="robust-1">Robust</h3>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" title="1">mlrrob &lt;-<span class="st"> </span><span class="kw">lmrob</span>(CITY<span class="op">$</span>wage2020 <span class="op">~</span><span class="st"> </span>CITY<span class="op">$</span>workforceCollege_<span class="dv">2020</span> <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>direct <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>wage2018 <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>service2020 <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>hired2020, )</a>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" title="1">mlrrob &lt;-<span class="st"> </span><span class="kw">lmrob</span>(CITY<span class="op">$</span>wage2020 <span class="op">~</span><span class="st"> </span>CITY<span class="op">$</span>workforceCollege_<span class="dv">2020</span> <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>direct <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>wage2018 <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>manufecture2020 <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>hired2020, )</a>
 <a class="sourceLine" id="cb28-2" title="2"><span class="kw">summary</span>(mlrrob)</a>
 <a class="sourceLine" id="cb28-3" title="3"><span class="co">#stargazer(mlr)</span></a></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lmrob(formula = CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + 
-##     CITY$wage2018 + CITY$service2020 + CITY$hired2020)
+##     CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020)
 ##  \--&gt; method = &quot;MM&quot;
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -1.04982 -0.22670  0.04797  0.35895  2.17301 
+## -1.11185 -0.22967  0.01904  0.32530  2.21284 
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)                 0.721935   1.293503   0.558    0.586    
-## CITY$workforceCollege_2020  0.086164   0.015425   5.586 6.71e-05 ***
-## CITY$direct                -0.004249   0.103995  -0.041    0.968    
-## CITY$wage2018               0.994973   0.014650  67.914  &lt; 2e-16 ***
-## CITY$service2020           -0.014448   0.023269  -0.621    0.545    
-## CITY$hired2020             -0.027160   0.019075  -1.424    0.176    
+## (Intercept)                 0.290339   1.612505   0.180    0.860    
+## CITY$workforceCollege_2020  0.079674   0.013457   5.920 3.73e-05 ***
+## CITY$direct                 0.020426   0.239663   0.085    0.933    
+## CITY$wage2018               0.997127   0.010547  94.539  &lt; 2e-16 ***
+## CITY$manufecture2020        0.009307   0.022067   0.422    0.680    
+## CITY$hired2020             -0.034386   0.042429  -0.810    0.431    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Robust residual standard error: 0.5018 
-## Multiple R-squared:  0.9984, Adjusted R-squared:  0.9979 
-## Convergence in 14 IRWLS iterations
+## Robust residual standard error: 0.4739 
+## Multiple R-squared:  0.9985, Adjusted R-squared:  0.998 
+## Convergence in 16 IRWLS iterations
 ## 
 ## Robustness weights: 
-##  one weight is ~= 1. The remaining 19 ones are summarized as
+##  observation 8 is an outlier with |weight| &lt;= 4.3e-05 ( &lt; 0.005); 
+##  2 weights are ~= 1. The remaining 17 ones are summarized as
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-## 0.02122 0.90050 0.95820 0.88710 0.98510 0.99740 
+##  0.5613  0.9289  0.9621  0.9215  0.9790  0.9951 
 ## Algorithmic parameters: 
 ##        tuning.chi                bb        tuning.psi        refine.tol 
 ##         1.548e+00         5.000e-01         4.685e+00         1.000e-07 
@@ -970,36 +971,36 @@ body {
 ## seed : int(0)
 </code></pre>
 <h2 id="instrumental-variable-workforce-age-structure">Instrumental variable: workforce age structure</h2>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" title="1">IVmlr &lt;-<span class="st"> </span><span class="kw">ivreg</span>(CITY<span class="op">$</span>wage2020 <span class="op">~</span><span class="st"> </span>CITY<span class="op">$</span>direct <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>wage2018 <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>service2020 <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>hired2020 <span class="op">|</span><span class="st"> </span>CITY<span class="op">$</span>workforceCollege_<span class="dv">2020</span> <span class="op">|</span><span class="st"> </span>CITY<span class="op">$</span>workforceYoung_<span class="dv">2010</span>)</a>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" title="1">IVmlr &lt;-<span class="st"> </span><span class="kw">ivreg</span>(CITY<span class="op">$</span>wage2020 <span class="op">~</span><span class="st"> </span>CITY<span class="op">$</span>direct <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>wage2018 <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>manufecture2020 <span class="op">+</span><span class="st"> </span>CITY<span class="op">$</span>hired2020 <span class="op">|</span><span class="st"> </span>CITY<span class="op">$</span>workforceCollege_<span class="dv">2020</span> <span class="op">|</span><span class="st"> </span>CITY<span class="op">$</span>workforceYoung_<span class="dv">2010</span>)</a>
 <a class="sourceLine" id="cb30-2" title="2"><span class="kw">summary</span>(IVmlr)</a></code></pre></div>
 <pre><code>## 
 ## Call:
 ## ivreg(formula = CITY$wage2020 ~ CITY$direct + CITY$wage2018 + 
-##     CITY$service2020 + CITY$hired2020 | CITY$workforceCollege_2020 | 
+##     CITY$manufecture2020 + CITY$hired2020 | CITY$workforceCollege_2020 | 
 ##     CITY$workforceYoung_2010)
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -0.9330 -0.3077 -0.1831  0.4268  1.4951 
+## -0.9873 -0.3615 -0.1494  0.3855  1.4956 
 ## 
 ## Coefficients:
 ##                            Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)                 0.37486    5.96879   0.063    0.951    
-## CITY$workforceCollege_2020  0.10904    0.15964   0.683    0.506    
-## CITY$direct                -0.35810    0.88342  -0.405    0.691    
-## CITY$wage2018               1.00010    0.07708  12.976 3.41e-09 ***
-## CITY$service2020           -0.03945    0.07669  -0.514    0.615    
-## CITY$hired2020             -0.01953    0.06254  -0.312    0.759    
+## (Intercept)                -0.64294    3.36822  -0.191    0.851    
+## CITY$workforceCollege_2020  0.09783    0.10280   0.952    0.357    
+## CITY$direct                -0.30822    0.65018  -0.474    0.643    
+## CITY$wage2018               1.00663    0.04929  20.425 8.09e-12 ***
+## CITY$manufecture2020        0.03505    0.04752   0.737    0.473    
+## CITY$hired2020             -0.05021    0.08701  -0.577    0.573    
 ## 
 ## Diagnostic tests:
 ##                  df1 df2 statistic p-value
-## Weak instruments   1  14     0.630   0.441
-## Wu-Hausman         1  13     0.026   0.874
+## Weak instruments   1  14     1.252   0.282
+## Wu-Hausman         1  13     0.052   0.824
 ## Sargan             0  NA        NA      NA
 ## 
-## Residual standard error: 0.701 on 14 degrees of freedom
-## Multiple R-Squared: 0.9975,  Adjusted R-squared: 0.9967 
-## Wald test:  1135 on 5 and 14 DF,  p-value: &lt; 2.2e-16
+## Residual standard error: 0.7043 on 14 degrees of freedom
+## Multiple R-Squared: 0.9975,  Adjusted R-squared: 0.9966 
+## Wald test:  1125 on 5 and 14 DF,  p-value: &lt; 2.2e-16
 </code></pre>
 <h1 id="first-difference-panel-data">First difference panel data</h1>
 <h2 id="construct-difference-term">Construct difference term</h2>
@@ -1009,85 +1010,90 @@ body {
 <a class="sourceLine" id="cb32-4" title="4"><span class="dt">workforceCollegeDiff2 =</span> workforceCollege_<span class="dv">2019</span> <span class="op">-</span><span class="st"> </span>workforceCollege_<span class="dv">2018</span>,</a>
 <a class="sourceLine" id="cb32-5" title="5"><span class="dt">serviceDiff1 =</span> service2020 <span class="op">-</span><span class="st"> </span>service2019,</a>
 <a class="sourceLine" id="cb32-6" title="6"><span class="dt">serviceDiff2 =</span> service2019 <span class="op">-</span><span class="st"> </span>service2018,</a>
-<a class="sourceLine" id="cb32-7" title="7"><span class="dt">hiredDiff1 =</span> hired2020 <span class="op">-</span><span class="st"> </span>hired2019,</a>
-<a class="sourceLine" id="cb32-8" title="8"><span class="dt">hiredDiff2 =</span> hired2019 <span class="op">-</span><span class="st"> </span>hired2018,</a>
-<a class="sourceLine" id="cb32-9" title="9"><span class="dt">lwageDiff1 =</span> lwage2020 <span class="op">-</span><span class="st"> </span>lwage2019,</a>
-<a class="sourceLine" id="cb32-10" title="10"><span class="dt">lwageDiff2 =</span> lwage2019 <span class="op">-</span><span class="st"> </span>lwage2018,</a>
-<a class="sourceLine" id="cb32-11" title="11"><span class="dt">workforceYoungDiff1 =</span> workforceYoung_<span class="dv">2015</span> <span class="op">-</span><span class="st"> </span>workforceYoung_<span class="dv">2014</span>,</a>
-<a class="sourceLine" id="cb32-12" title="12"><span class="dt">workforceYoungDiff2 =</span> workforceYoung_<span class="dv">2014</span> <span class="op">-</span><span class="st"> </span>workforceYoung_<span class="dv">2013</span>,</a>
-<a class="sourceLine" id="cb32-13" title="13"><span class="dt">eduLevelDiff1 =</span> eduLevel2020 <span class="op">-</span><span class="st"> </span>eduLevel2019,</a>
-<a class="sourceLine" id="cb32-14" title="14"><span class="dt">eduLevelDiff2 =</span> eduLevel2019 <span class="op">-</span><span class="st"> </span>eduLevel2018,</a>
-<a class="sourceLine" id="cb32-15" title="15">)</a></code></pre></div>
+<a class="sourceLine" id="cb32-7" title="7"><span class="dt">manufecDiff1 =</span> manufecture2020 <span class="op">-</span><span class="st"> </span>manufecture2019,</a>
+<a class="sourceLine" id="cb32-8" title="8"><span class="dt">manufecDiff2 =</span> manufecture2019 <span class="op">-</span><span class="st"> </span>manufecture2018,</a>
+<a class="sourceLine" id="cb32-9" title="9"><span class="dt">hiredDiff1 =</span> hired2020 <span class="op">-</span><span class="st"> </span>hired2019,</a>
+<a class="sourceLine" id="cb32-10" title="10"><span class="dt">hiredDiff2 =</span> hired2019 <span class="op">-</span><span class="st"> </span>hired2018,</a>
+<a class="sourceLine" id="cb32-11" title="11"><span class="dt">lwageDiff1 =</span> lwage2020 <span class="op">-</span><span class="st"> </span>lwage2019,</a>
+<a class="sourceLine" id="cb32-12" title="12"><span class="dt">lwageDiff2 =</span> lwage2019 <span class="op">-</span><span class="st"> </span>lwage2018,</a>
+<a class="sourceLine" id="cb32-13" title="13"><span class="dt">workforceYoungDiff1 =</span> workforceYoung_<span class="dv">2015</span> <span class="op">-</span><span class="st"> </span>workforceYoung_<span class="dv">2014</span>,</a>
+<a class="sourceLine" id="cb32-14" title="14"><span class="dt">workforceYoungDiff2 =</span> workforceYoung_<span class="dv">2014</span> <span class="op">-</span><span class="st"> </span>workforceYoung_<span class="dv">2013</span>,</a>
+<a class="sourceLine" id="cb32-15" title="15"><span class="dt">eduLevelDiff1 =</span> eduLevel2020 <span class="op">-</span><span class="st"> </span>eduLevel2019,</a>
+<a class="sourceLine" id="cb32-16" title="16"><span class="dt">eduLevelDiff2 =</span> eduLevel2019 <span class="op">-</span><span class="st"> </span>eduLevel2018,</a>
+<a class="sourceLine" id="cb32-17" title="17">)</a></code></pre></div>
 <div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" title="1">wageDiff &lt;-<span class="st"> </span><span class="kw">c</span>(CITY<span class="op">$</span>wageDiff1, CITY<span class="op">$</span>wageDiff2)</a>
 <a class="sourceLine" id="cb33-2" title="2">workforceCollegeDiff &lt;-<span class="st"> </span><span class="kw">c</span>(CITY<span class="op">$</span>workforceCollegeDiff1, CITY<span class="op">$</span>workforceCollegeDiff2) </a>
 <a class="sourceLine" id="cb33-3" title="3">direct2 &lt;-<span class="st"> </span><span class="kw">c</span>(CITY<span class="op">$</span>direct, CITY<span class="op">$</span>direct)</a>
 <a class="sourceLine" id="cb33-4" title="4">serviceDiff &lt;-<span class="st"> </span><span class="kw">c</span>(CITY<span class="op">$</span>serviceDiff1, CITY<span class="op">$</span>workforceCollegeDiff2)</a>
-<a class="sourceLine" id="cb33-5" title="5">hiredDiff &lt;-<span class="st"> </span><span class="kw">c</span>(CITY<span class="op">$</span>hiredDiff1, CITY<span class="op">$</span>hiredDiff2)</a>
-<a class="sourceLine" id="cb33-6" title="6">lwageDiff &lt;-<span class="st"> </span><span class="kw">c</span>(CITY<span class="op">$</span>lwageDiff1, CITY<span class="op">$</span>lwageDiff2)</a>
-<a class="sourceLine" id="cb33-7" title="7">workforceYoungDiff &lt;-<span class="st"> </span><span class="kw">c</span>(CITY<span class="op">$</span>workforceYoungDiff1, CITY<span class="op">$</span>workforceYoungDiff2)</a>
-<a class="sourceLine" id="cb33-8" title="8">one &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dt">length.out =</span> <span class="kw">nrow</span>(CITY))</a>
-<a class="sourceLine" id="cb33-9" title="9">zero &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dt">length.out =</span> <span class="kw">nrow</span>(CITY))</a>
-<a class="sourceLine" id="cb33-10" title="10">dummy1 &lt;-<span class="st"> </span><span class="kw">c</span>(one, zero)</a>
-<a class="sourceLine" id="cb33-11" title="11">dummy2 &lt;-<span class="st"> </span><span class="kw">c</span>(zero, one)</a>
-<a class="sourceLine" id="cb33-12" title="12">eduLevelDiff &lt;-<span class="st"> </span><span class="kw">c</span>(CITY<span class="op">$</span>eduLevelDiff1, CITY<span class="op">$</span>eduLevelDiff2)</a>
-<a class="sourceLine" id="cb33-13" title="13"></a>
-<a class="sourceLine" id="cb33-14" title="14"><span class="kw">plot</span>(workforceCollegeDiff, wageDiff)</a></code></pre></div>
+<a class="sourceLine" id="cb33-5" title="5">manufectDiff &lt;-<span class="st"> </span><span class="kw">c</span>(CITY<span class="op">$</span>manufecDiff1, CITY<span class="op">$</span>manufecDiff2)</a>
+<a class="sourceLine" id="cb33-6" title="6">hiredDiff &lt;-<span class="st"> </span><span class="kw">c</span>(CITY<span class="op">$</span>hiredDiff1, CITY<span class="op">$</span>hiredDiff2)</a>
+<a class="sourceLine" id="cb33-7" title="7">lwageDiff &lt;-<span class="st"> </span><span class="kw">c</span>(CITY<span class="op">$</span>lwageDiff1, CITY<span class="op">$</span>lwageDiff2)</a>
+<a class="sourceLine" id="cb33-8" title="8">workforceYoungDiff &lt;-<span class="st"> </span><span class="kw">c</span>(CITY<span class="op">$</span>workforceYoungDiff1, CITY<span class="op">$</span>workforceYoungDiff2)</a>
+<a class="sourceLine" id="cb33-9" title="9">one &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dt">length.out =</span> <span class="kw">nrow</span>(CITY))</a>
+<a class="sourceLine" id="cb33-10" title="10">zero &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dt">length.out =</span> <span class="kw">nrow</span>(CITY))</a>
+<a class="sourceLine" id="cb33-11" title="11">dummy1 &lt;-<span class="st"> </span><span class="kw">c</span>(one, zero)</a>
+<a class="sourceLine" id="cb33-12" title="12">dummy2 &lt;-<span class="st"> </span><span class="kw">c</span>(zero, one)</a>
+<a class="sourceLine" id="cb33-13" title="13">eduLevelDiff &lt;-<span class="st"> </span><span class="kw">c</span>(CITY<span class="op">$</span>eduLevelDiff1, CITY<span class="op">$</span>eduLevelDiff2)</a>
+<a class="sourceLine" id="cb33-14" title="14"></a>
+<a class="sourceLine" id="cb33-15" title="15"><span class="kw">plot</span>(workforceCollegeDiff, wageDiff)</a></code></pre></div>
 <p><img src="data:image/png;base64,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" /><!-- --></p>
 <h2 id="college-worker-share">College worker share</h2>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" title="1">plm &lt;-<span class="st"> </span><span class="kw">lm</span>(wageDiff <span class="op">~</span><span class="st"> </span>workforceCollegeDiff <span class="op">+</span><span class="st"> </span>direct2 <span class="op">+</span><span class="st"> </span>serviceDiff <span class="op">+</span><span class="st"> </span>hiredDiff)</a>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" title="1">plm &lt;-<span class="st"> </span><span class="kw">lm</span>(wageDiff <span class="op">~</span><span class="st"> </span>workforceCollegeDiff <span class="op">+</span><span class="st"> </span>direct2 <span class="op">+</span><span class="st"> </span>serviceDiff <span class="op">+</span><span class="st"> </span>manufectDiff <span class="op">+</span><span class="st"> </span>hiredDiff)</a>
 <a class="sourceLine" id="cb34-2" title="2"><span class="kw">summary</span>(plm)</a>
-<a class="sourceLine" id="cb34-3" title="3">plmrob &lt;-<span class="st"> </span><span class="kw">lmrob</span>(wageDiff <span class="op">~</span><span class="st"> </span>workforceCollegeDiff <span class="op">+</span><span class="st"> </span>direct2 <span class="op">+</span><span class="st"> </span>serviceDiff <span class="op">+</span><span class="st"> </span>hiredDiff)</a>
+<a class="sourceLine" id="cb34-3" title="3">plmrob &lt;-<span class="st"> </span><span class="kw">lmrob</span>(wageDiff <span class="op">~</span><span class="st"> </span>workforceCollegeDiff <span class="op">+</span><span class="st"> </span>direct2 <span class="op">+</span><span class="st"> </span>serviceDiff <span class="op">+</span><span class="st"> </span>manufectDiff <span class="op">+</span><span class="st"> </span>hiredDiff)</a>
 <a class="sourceLine" id="cb34-4" title="4"><span class="kw">summary</span>(plmrob)</a></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = wageDiff ~ workforceCollegeDiff + direct2 + serviceDiff + 
-##     hiredDiff)
+##     manufectDiff + hiredDiff)
 ## 
 ## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -1.15682 -0.42429  0.02814  0.32972  1.54687 
+##     Min      1Q  Median      3Q     Max 
+## -1.2197 -0.4581  0.0338  0.3110  1.4876 
 ## 
 ## Coefficients:
 ##                      Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)            0.7215     0.1413   5.106 1.17e-05 ***
-## workforceCollegeDiff  -0.1364     0.1116  -1.222  0.22997    
-## direct2                0.3900     0.2279   1.711  0.09590 .  
-## serviceDiff            0.3463     0.1174   2.951  0.00563 ** 
-## hiredDiff             -0.1111     0.1036  -1.072  0.29101    
+## (Intercept)           0.71614    0.14301   5.007 1.68e-05 ***
+## workforceCollegeDiff -0.13578    0.11272  -1.205   0.2367    
+## direct2               0.39699    0.23049   1.722   0.0941 .  
+## serviceDiff           0.31348    0.13169   2.380   0.0230 *  
+## manufectDiff         -0.06977    0.12225  -0.571   0.5719    
+## hiredDiff            -0.07263    0.12443  -0.584   0.5632    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 0.6501 on 35 degrees of freedom
-## Multiple R-squared:  0.2411, Adjusted R-squared:  0.1544 
-## F-statistic:  2.78 on 4 and 35 DF,  p-value: 0.04178
+## Residual standard error: 0.6564 on 34 degrees of freedom
+## Multiple R-squared:  0.2483, Adjusted R-squared:  0.1377 
+## F-statistic: 2.246 on 5 and 34 DF,  p-value: 0.07205
 ## 
 ## 
 ## Call:
 ## lmrob(formula = wageDiff ~ workforceCollegeDiff + direct2 + serviceDiff + 
-##     hiredDiff)
+##     manufectDiff + hiredDiff)
 ##  \--&gt; method = &quot;MM&quot;
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -1.14015 -0.40624  0.05274  0.33145  1.76221 
+## -1.17649 -0.39646  0.05387  0.33063  1.71991 
 ## 
 ## Coefficients:
 ##                      Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)           0.66958    0.13661   4.901 2.16e-05 ***
-## workforceCollegeDiff -0.10564    0.08445  -1.251 0.219262    
-## direct2               0.32696    0.27090   1.207 0.235537    
-## serviceDiff           0.37005    0.10286   3.598 0.000982 ***
-## hiredDiff            -0.10607    0.10568  -1.004 0.322405    
+## (Intercept)           0.67102    0.14119   4.753 3.59e-05 ***
+## workforceCollegeDiff -0.10854    0.08582  -1.265  0.21455    
+## direct2               0.34046    0.28344   1.201  0.23799    
+## serviceDiff           0.35821    0.10335   3.466  0.00145 ** 
+## manufectDiff         -0.02771    0.13001  -0.213  0.83248    
+## hiredDiff            -0.09186    0.11940  -0.769  0.44702    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Robust residual standard error: 0.5917 
-## Multiple R-squared:  0.2813, Adjusted R-squared:  0.1992 
+## Robust residual standard error: 0.6003 
+## Multiple R-squared:  0.2798, Adjusted R-squared:  0.1739 
 ## Convergence in 17 IRWLS iterations
 ## 
 ## Robustness weights: 
-##  2 weights are ~= 1. The remaining 38 ones are summarized as
+##  3 weights are ~= 1. The remaining 37 ones are summarized as
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.3551  0.9188  0.9623  0.9061  0.9781  0.9989 
+##  0.3918  0.9128  0.9615  0.9065  0.9772  0.9988 
 ## Algorithmic parameters: 
 ##        tuning.chi                bb        tuning.psi        refine.tol 
 ##         1.548e+00         5.000e-01         4.685e+00         1.000e-07 
@@ -1105,34 +1111,35 @@ body {
 ##                  &quot;SM&quot; 
 ## seed : int(0)
 </code></pre>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" title="1">plmiv &lt;-<span class="st"> </span><span class="kw">ivreg</span>(wageDiff <span class="op">~</span><span class="st"> </span>direct2 <span class="op">+</span><span class="st"> </span>serviceDiff <span class="op">+</span><span class="st"> </span>hiredDiff <span class="op">|</span><span class="st"> </span>workforceCollegeDiff <span class="op">|</span><span class="st"> </span>workforceYoungDiff)</a>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" title="1">plmiv &lt;-<span class="st"> </span><span class="kw">ivreg</span>(wageDiff <span class="op">~</span><span class="st"> </span>direct2 <span class="op">+</span><span class="st"> </span>serviceDiff <span class="op">+</span><span class="st"> </span>manufectDiff <span class="op">+</span><span class="st"> </span>hiredDiff <span class="op">|</span><span class="st"> </span>workforceCollegeDiff <span class="op">|</span><span class="st"> </span>workforceYoungDiff)</a>
 <a class="sourceLine" id="cb36-2" title="2"><span class="kw">summary</span>(plmiv)</a></code></pre></div>
 <pre><code>## 
 ## Call:
-## ivreg(formula = wageDiff ~ direct2 + serviceDiff + hiredDiff | 
-##     workforceCollegeDiff | workforceYoungDiff)
+## ivreg(formula = wageDiff ~ direct2 + serviceDiff + manufectDiff + 
+##     hiredDiff | workforceCollegeDiff | workforceYoungDiff)
 ## 
 ## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -1.26771 -0.48369 -0.09904  0.41326  2.07309 
+##     Min      1Q  Median      3Q     Max 
+## -1.1672 -0.4544 -0.1166  0.4605  1.9601 
 ## 
 ## Coefficients:
 ##                      Estimate Std. Error t value Pr(&gt;|t|)
-## (Intercept)           0.54693    0.56200   0.973    0.337
-## workforceCollegeDiff  0.26081    1.22897   0.212    0.833
-## direct2               0.27556    0.44141   0.624    0.537
-## serviceDiff           0.08202    0.82449   0.099    0.921
-## hiredDiff            -0.10651    0.12172  -0.875    0.388
+## (Intercept)           0.55807    0.55155   1.012    0.319
+## workforceCollegeDiff  0.22318    1.20342   0.185    0.854
+## direct2               0.29388    0.43255   0.679    0.501
+## serviceDiff           0.07300    0.81555   0.090    0.929
+## manufectDiff         -0.07336    0.13980  -0.525    0.603
+## hiredDiff            -0.06653    0.14323  -0.464    0.645
 ## 
 ## Diagnostic tests:
 ##                  df1 df2 statistic p-value
-## Weak instruments   1  35     0.398   0.532
-## Wu-Hausman         1  34     0.140   0.710
+## Weak instruments   1  34     0.392   0.536
+## Wu-Hausman         1  33     0.114   0.738
 ## Sargan             0  NA        NA      NA
 ## 
-## Residual standard error: 0.7586 on 35 degrees of freedom
-## Multiple R-Squared: -0.03347,    Adjusted R-squared: -0.1516 
-## Wald test: 1.778 on 4 and 35 DF,  p-value: 0.1552
+## Residual standard error: 0.748 on 34 degrees of freedom
+## Multiple R-Squared: 0.02407, Adjusted R-squared: -0.1195 
+## Wald test: 1.513 on 5 and 34 DF,  p-value: 0.2116
 </code></pre>
 <h2 id="city-educational-level">City educational level</h2>
 <div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" title="1">plmedulevel &lt;-<span class="st"> </span><span class="kw">lm</span>(wageDiff <span class="op">~</span><span class="st"> </span>eduLevelDiff <span class="op">+</span><span class="st"> </span>direct2 <span class="op">+</span><span class="st"> </span>serviceDiff <span class="op">+</span><span class="st"> </span>hiredDiff)</a>

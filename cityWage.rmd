@@ -131,7 +131,7 @@ Heteroskedaticity doesn't seem present.
 
 # MLR
 ```{R, results='hold'}
-mlr <- lm(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + CITY$service2020 + CITY$hired2020, )
+mlr <- lm(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020, )
 summary(mlr)
 #stargazer(mlr)
 ```
@@ -150,10 +150,10 @@ summary(edu)
 
 ## Use educational level as main explanatory
 ```{R, results="hold"}
-edulevel <- lm(wage2020 ~ direct + service2020 + eduLevel2020 + hired2020 + wage2018, data = CITY)
+edulevel <- lm(wage2020 ~ direct + manufecture2020 + eduLevel2020 + hired2020 + wage2018, data = CITY)
 summary(edulevel)
 bptest(edulevel)
-edulevelrob <- lmrob(wage2020 ~ direct + service2020 + eduLevel2020 + hired2020 + wage2018, data = CITY)
+edulevelrob <- lmrob(wage2020 ~ direct + manufecture2020 + eduLevel2020 + hired2020 + wage2018, data = CITY)
 summary(edulevelrob)
 ```
 
@@ -168,7 +168,7 @@ Heteroskedaticity doesn't seem present.
 
 ### Robust
 ```{R, results='hold'}
-mlrrob <- lmrob(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + CITY$service2020 + CITY$hired2020, )
+mlrrob <- lmrob(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020, )
 summary(mlrrob)
 #stargazer(mlr)
 ```
@@ -176,7 +176,7 @@ summary(mlrrob)
 
 ## Instrumental variable: workforce age structure
 ```{R}
-IVmlr <- ivreg(CITY$wage2020 ~ CITY$direct + CITY$wage2018 + CITY$service2020 + CITY$hired2020 | CITY$workforceCollege_2020 | CITY$workforceYoung_2010)
+IVmlr <- ivreg(CITY$wage2020 ~ CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020 | CITY$workforceCollege_2020 | CITY$workforceYoung_2010)
 summary(IVmlr)
 ```
 
@@ -190,6 +190,8 @@ workforceCollegeDiff1 = workforceCollege_2020 - workforceCollege_2019,
 workforceCollegeDiff2 = workforceCollege_2019 - workforceCollege_2018,
 serviceDiff1 = service2020 - service2019,
 serviceDiff2 = service2019 - service2018,
+manufecDiff1 = manufecture2020 - manufecture2019,
+manufecDiff2 = manufecture2019 - manufecture2018,
 hiredDiff1 = hired2020 - hired2019,
 hiredDiff2 = hired2019 - hired2018,
 lwageDiff1 = lwage2020 - lwage2019,
@@ -205,6 +207,7 @@ wageDiff <- c(CITY$wageDiff1, CITY$wageDiff2)
 workforceCollegeDiff <- c(CITY$workforceCollegeDiff1, CITY$workforceCollegeDiff2) 
 direct2 <- c(CITY$direct, CITY$direct)
 serviceDiff <- c(CITY$serviceDiff1, CITY$workforceCollegeDiff2)
+manufectDiff <- c(CITY$manufecDiff1, CITY$manufecDiff2)
 hiredDiff <- c(CITY$hiredDiff1, CITY$hiredDiff2)
 lwageDiff <- c(CITY$lwageDiff1, CITY$lwageDiff2)
 workforceYoungDiff <- c(CITY$workforceYoungDiff1, CITY$workforceYoungDiff2)
@@ -220,14 +223,14 @@ plot(workforceCollegeDiff, wageDiff)
 ## College worker share
 
 ```{R, results='hold'}
-plm <- lm(wageDiff ~ workforceCollegeDiff + direct2 + serviceDiff + hiredDiff)
+plm <- lm(wageDiff ~ workforceCollegeDiff + direct2 + serviceDiff + manufectDiff + hiredDiff)
 summary(plm)
-plmrob <- lmrob(wageDiff ~ workforceCollegeDiff + direct2 + serviceDiff + hiredDiff)
+plmrob <- lmrob(wageDiff ~ workforceCollegeDiff + direct2 + serviceDiff + manufectDiff + hiredDiff)
 summary(plmrob)
 ```
 
 ```{R}
-plmiv <- ivreg(wageDiff ~ direct2 + serviceDiff + hiredDiff | workforceCollegeDiff | workforceYoungDiff)
+plmiv <- ivreg(wageDiff ~ direct2 + serviceDiff + manufectDiff + hiredDiff | workforceCollegeDiff | workforceYoungDiff)
 summary(plmiv)
 ```
 
