@@ -13,6 +13,7 @@ library(lmtest) #for heteroskedaticity test
 library(data.table) #for transpose() function
 library(ivreg) #for instrumental variable 2SLS regression
 library(dplyr)
+library(robustbase)
 ```
 
 # Import Data
@@ -60,7 +61,7 @@ CITY <- workforceTranspose("workforceRetired", 55, 66)
 ```{R}
 for(i in 2:ncol(rawCityAddition)) {
     if(!is.na(rawCityAddition[2, i])){
-        CITY <- cbind(CITY, rawCityAddition[1:20, i])
+        CITY <- cbind(CITY, as.numeric(unlist(rawCityAddition[1:20, i])))
     }   
 }
 ```
@@ -75,6 +76,20 @@ colnames(CITY)[91:93] <- c("married2018", "married2019", "married2020")
 colnames(CITY)[95:97] <- c("eduLevel2018", "eduLevel2019", "eduLevel2020")
 colnames(CITY)[99:101] <- c("expensePerCapita2018", "expensePerCapita2019", "expensePerCapita2020")
 colnames(CITY)[103:105] <- c("unemployment2018", "unemployment2019", "unemployment2020")
+```
+
+```{R}
+nacol <- vector()
+for(j in 1:ncol(CITY)) {
+    if(is.na(CITY[2, j])) {
+        nacol <- c(nacol, j)
+    }
+}
+CITY <- CITY[-nacol]
+```
+
+```{R}
+CITY <- mutate(CITY, lwage2020 = log(wage2020), lwage2019 = log(wage2019), lwage2018 = log(wage2018), directEdu = direct * workforceCollege_2020)
 ```
 
 # SLR with college graduates number
@@ -116,13 +131,13 @@ Heteroskedaticity doesn't seem present.
 
 # MLR
 ```{R, results='hold'}
-mlr <- lm(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018, )
+mlr <- lm(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + CITY$service2020 + CITY$hired2020, )
 summary(mlr)
 #stargazer(mlr)
 ```
 
 ```{R, results="hold"}
-mlr2 <- lm(wage2020 ~ workforceCollege_2020 + direct + hired2020 + manufecture2020 + service2020 + gender2020 + eduExpense2020 + eduLevel2020 + married2020 + expensePerCapita2020 + unemployment2020 ,data = CITY)
+mlr2 <- lm(wage2020 ~ workforceCollege_2020 + direct + hired2020 + manufecture2020 + service2020 + gender2020 + eduExpense2020 + eduLevel2020 + married2020 + expensePerCapita2020 + unemployment2020 + directEdu ,data = CITY)
 summary(mlr2)
 bptest(mlr2)
 ```
@@ -133,12 +148,13 @@ edu <- lm(wage2020 ~ workforceCollege_2020 + eduExpense2020 + eduLevel2020, data
 summary(edu)
 ```
 
-## Use educational expense as main explanatory
-```{R}
-eduexpense <- lm(wage2020 ~ direct + manufecture2020 + eduExpense2020 + wage2018, data = CITY)
-summary(eduexpense)
-bptest(eduexpense)
-
+## Use educational level as main explanatory
+```{R, results="hold"}
+edulevel <- lm(wage2020 ~ direct + service2020 + eduLevel2020 + hired2020 + wage2018, data = CITY)
+summary(edulevel)
+bptest(edulevel)
+edulevelrob <- lmrob(wage2020 ~ direct + service2020 + eduLevel2020 + hired2020 + wage2018, data = CITY)
+summary(edulevelrob)
 ```
 
 ## Heteroskedaticity
@@ -146,15 +162,21 @@ bptest(eduexpense)
 ### Test
 We use the White Test for heteroskedaticity by specifying a formula with interaction term and sqaure term to the BP Test.
 ```{R}
-bptest(mlr, ~ CITY$workforceCollege_2020 + CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + I(CITY$workforceCollege_2020^2) + I(CITY$wage2018^2) + I(CITY$workforceCollege_2020*CITY$wage2018))
+bptest(mlr)
 ```
 Heteroskedaticity doesn't seem present.
 
 ### Robust
+```{R, results='hold'}
+mlrrob <- lmrob(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + CITY$service2020 + CITY$hired2020, )
+summary(mlrrob)
+#stargazer(mlr)
+```
+
 
 ## Instrumental variable: workforce age structure
 ```{R}
-IVmlr <- ivreg(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 | CITY$workforceMiddle_2010 + CITY$workforceOld_2010)
+IVmlr <- ivreg(CITY$wage2020 ~ CITY$direct + CITY$wage2018 + CITY$service2020 + CITY$hired2020 | CITY$workforceCollege_2020 | CITY$workforceYoung_2010)
 summary(IVmlr)
 ```
 
@@ -165,15 +187,60 @@ summary(IVmlr)
 CITY <- mutate(CITY, wageDiff1 = wage2020-wage2019, 
 wageDiff2 = wage2019-wage2018, 
 workforceCollegeDiff1 = workforceCollege_2020 - workforceCollege_2019, 
-workforceCollegeDiff2 = workforceCollege_2019 - workforceCollege_2018)
+workforceCollegeDiff2 = workforceCollege_2019 - workforceCollege_2018,
+serviceDiff1 = service2020 - service2019,
+serviceDiff2 = service2019 - service2018,
+hiredDiff1 = hired2020 - hired2019,
+hiredDiff2 = hired2019 - hired2018,
+lwageDiff1 = lwage2020 - lwage2019,
+lwageDiff2 = lwage2019 - lwage2018,
+workforceYoungDiff1 = workforceYoung_2015 - workforceYoung_2014,
+workforceYoungDiff2 = workforceYoung_2014 - workforceYoung_2013,
+eduLevelDiff1 = eduLevel2020 - eduLevel2019,
+eduLevelDiff2 = eduLevel2019 - eduLevel2018,
+)
 ```
 ```{R}
 wageDiff <- c(CITY$wageDiff1, CITY$wageDiff2)
 workforceCollegeDiff <- c(CITY$workforceCollegeDiff1, CITY$workforceCollegeDiff2) 
 direct2 <- c(CITY$direct, CITY$direct)
+serviceDiff <- c(CITY$serviceDiff1, CITY$workforceCollegeDiff2)
+hiredDiff <- c(CITY$hiredDiff1, CITY$hiredDiff2)
+lwageDiff <- c(CITY$lwageDiff1, CITY$lwageDiff2)
+workforceYoungDiff <- c(CITY$workforceYoungDiff1, CITY$workforceYoungDiff2)
+one <- seq(1, 1, length.out = nrow(CITY))
+zero <- seq(0, 0, length.out = nrow(CITY))
+dummy1 <- c(one, zero)
+dummy2 <- c(zero, one)
+eduLevelDiff <- c(CITY$eduLevelDiff1, CITY$eduLevelDiff2)
+
+plot(workforceCollegeDiff, wageDiff)
+```
+
+## College worker share
+
+```{R, results='hold'}
+plm <- lm(wageDiff ~ workforceCollegeDiff + direct2 + serviceDiff + hiredDiff)
+summary(plm)
+plmrob <- lmrob(wageDiff ~ workforceCollegeDiff + direct2 + serviceDiff + hiredDiff)
+summary(plmrob)
 ```
 
 ```{R}
-plm <- lm(wageDiff ~ workforceCollegeDiff + direct2)
-summary(plm)
+plmiv <- ivreg(wageDiff ~ direct2 + serviceDiff + hiredDiff | workforceCollegeDiff | workforceYoungDiff)
+summary(plmiv)
+```
+
+## City educational level
+
+```{R, results='hold'}
+plmedulevel <- lm(wageDiff ~ eduLevelDiff + direct2 + serviceDiff + hiredDiff)
+summary(plmedulevel)
+plmedulevelrob <- lmrob(wageDiff ~ eduLevelDiff + direct2 + serviceDiff + hiredDiff)
+summary(plmedulevelrob)
+```
+
+```{R}
+plmivedulevel <- ivreg(wageDiff ~ direct2 + serviceDiff + hiredDiff | eduLevelDiff | workforceYoungDiff)
+summary(plmivedulevel)
 ```
