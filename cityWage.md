@@ -188,36 +188,6 @@ Heteroskedaticity doesn’t seem present.
 # MLR
 
 ``` r
-mlr <- lm(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020, )
-summary(mlr)
-#stargazer(mlr)
-```
-
-    ## 
-    ## Call:
-    ## lm(formula = CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + 
-    ##     CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020)
-    ## 
-    ## Residuals:
-    ##      Min       1Q   Median       3Q      Max 
-    ## -0.99226 -0.36933 -0.01989  0.35062  1.45209 
-    ## 
-    ## Coefficients:
-    ##                            Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)                -1.25935    2.00540  -0.628   0.5401    
-    ## CITY$workforceCollege_2020  0.07512    0.02882   2.606   0.0207 *  
-    ## CITY$direct                -0.19412    0.41273  -0.470   0.6454    
-    ## CITY$wage2018               1.01685    0.02115  48.086   <2e-16 ***
-    ## CITY$manufecture2020        0.02534    0.02161   1.173   0.2605    
-    ## CITY$hired2020             -0.03220    0.03756  -0.857   0.4057    
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Residual standard error: 0.6892 on 14 degrees of freedom
-    ## Multiple R-squared:  0.9976, Adjusted R-squared:  0.9968 
-    ## F-statistic:  1176 on 5 and 14 DF,  p-value: < 2.2e-16
-
-``` r
 mlr2 <- lm(wage2020 ~ workforceCollege_2020 + direct + hired2020 + manufecture2020 + service2020 + gender2020 + eduExpense2020 + eduLevel2020 + married2020 + expensePerCapita2020 + unemployment2020 + directEdu ,data = CITY)
 summary(mlr2)
 bptest(mlr2)
@@ -289,6 +259,109 @@ summary(edu)
     ## Multiple R-squared:  0.5247, Adjusted R-squared:  0.4356 
     ## F-statistic: 5.889 on 3 and 16 DF,  p-value: 0.006598
 
+## Use college worker Share as main explanatory
+
+``` r
+mlr <- lm(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020, )
+summary(mlr)
+#stargazer(mlr)
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + 
+    ##     CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020)
+    ## 
+    ## Residuals:
+    ##      Min       1Q   Median       3Q      Max 
+    ## -0.99226 -0.36933 -0.01989  0.35062  1.45209 
+    ## 
+    ## Coefficients:
+    ##                            Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)                -1.25935    2.00540  -0.628   0.5401    
+    ## CITY$workforceCollege_2020  0.07512    0.02882   2.606   0.0207 *  
+    ## CITY$direct                -0.19412    0.41273  -0.470   0.6454    
+    ## CITY$wage2018               1.01685    0.02115  48.086   <2e-16 ***
+    ## CITY$manufecture2020        0.02534    0.02161   1.173   0.2605    
+    ## CITY$hired2020             -0.03220    0.03756  -0.857   0.4057    
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Residual standard error: 0.6892 on 14 degrees of freedom
+    ## Multiple R-squared:  0.9976, Adjusted R-squared:  0.9968 
+    ## F-statistic:  1176 on 5 and 14 DF,  p-value: < 2.2e-16
+
+### Heteroskedaticity
+
+#### Test
+
+We use the White Test for heteroskedaticity by specifying a formula with
+interaction term and sqaure term to the BP Test.
+
+``` r
+bptest(mlr)
+```
+
+    ## 
+    ##  studentized Breusch-Pagan test
+    ## 
+    ## data:  mlr
+    ## BP = 10.854, df = 5, p-value = 0.05435
+
+#### Robust
+
+``` r
+mlrrob <- lmrob(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020, )
+summary(mlrrob)
+#stargazer(mlr)
+```
+
+    ## 
+    ## Call:
+    ## lmrob(formula = CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + 
+    ##     CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020)
+    ##  \--> method = "MM"
+    ## Residuals:
+    ##      Min       1Q   Median       3Q      Max 
+    ## -1.11185 -0.22967  0.01904  0.32530  2.21284 
+    ## 
+    ## Coefficients:
+    ##                             Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)                 0.290339   1.612504   0.180    0.860    
+    ## CITY$workforceCollege_2020  0.079674   0.013457   5.920 3.73e-05 ***
+    ## CITY$direct                 0.020426   0.239663   0.085    0.933    
+    ## CITY$wage2018               0.997127   0.010547  94.539  < 2e-16 ***
+    ## CITY$manufecture2020        0.009307   0.022067   0.422    0.680    
+    ## CITY$hired2020             -0.034386   0.042429  -0.810    0.431    
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Robust residual standard error: 0.4739 
+    ## Multiple R-squared:  0.9985, Adjusted R-squared:  0.998 
+    ## Convergence in 16 IRWLS iterations
+    ## 
+    ## Robustness weights: 
+    ##  observation 8 is an outlier with |weight| <= 4.3e-05 ( < 0.005); 
+    ##  2 weights are ~= 1. The remaining 17 ones are summarized as
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##  0.5613  0.9289  0.9621  0.9215  0.9790  0.9951 
+    ## Algorithmic parameters: 
+    ##        tuning.chi                bb        tuning.psi        refine.tol 
+    ##         1.548e+00         5.000e-01         4.685e+00         1.000e-07 
+    ##           rel.tol         scale.tol         solve.tol       eps.outlier 
+    ##         1.000e-07         1.000e-10         1.000e-07         5.000e-03 
+    ##             eps.x warn.limit.reject warn.limit.meanrw 
+    ##         1.723e-10         5.000e-01         5.000e-01 
+    ##      nResample         max.it       best.r.s       k.fast.s          k.max 
+    ##            500             50              2              1            200 
+    ##    maxit.scale      trace.lev            mts     compute.rd fast.s.large.n 
+    ##            200              0           1000              0           2000 
+    ##                   psi           subsampling                   cov 
+    ##            "bisquare"         "nonsingular"         ".vcov.avar1" 
+    ## compute.outlier.stats 
+    ##                  "SM" 
+    ## seed : int(0)
+
 ## Use educational level as main explanatory
 
 ``` r
@@ -340,11 +413,11 @@ summary(edulevelrob)
     ## 
     ## Coefficients:
     ##                  Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)     -0.247531   1.673355  -0.148 0.884512    
-    ## direct          -0.106571   0.212691  -0.501 0.624114    
-    ## manufecture2020  0.008061   0.020700   0.389 0.702825    
-    ## eduLevel2020     0.079934   0.015475   5.165 0.000143 ***
-    ## hired2020       -0.017022   0.040924  -0.416 0.683764    
+    ## (Intercept)     -0.247531   1.673358  -0.148 0.884511    
+    ## direct          -0.106571   0.212691  -0.501 0.624115    
+    ## manufecture2020  0.008061   0.020700   0.389 0.702826    
+    ## eduLevel2020     0.079934   0.015476   5.165 0.000143 ***
+    ## hired2020       -0.017022   0.040925  -0.416 0.683766    
     ## wage2018         0.992269   0.009169 108.224  < 2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
@@ -358,79 +431,6 @@ summary(edulevelrob)
     ##  The remaining 19 ones are summarized as
     ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
     ##  0.5836  0.9200  0.9542  0.9114  0.9736  0.9979 
-    ## Algorithmic parameters: 
-    ##        tuning.chi                bb        tuning.psi        refine.tol 
-    ##         1.548e+00         5.000e-01         4.685e+00         1.000e-07 
-    ##           rel.tol         scale.tol         solve.tol       eps.outlier 
-    ##         1.000e-07         1.000e-10         1.000e-07         5.000e-03 
-    ##             eps.x warn.limit.reject warn.limit.meanrw 
-    ##         1.723e-10         5.000e-01         5.000e-01 
-    ##      nResample         max.it       best.r.s       k.fast.s          k.max 
-    ##            500             50              2              1            200 
-    ##    maxit.scale      trace.lev            mts     compute.rd fast.s.large.n 
-    ##            200              0           1000              0           2000 
-    ##                   psi           subsampling                   cov 
-    ##            "bisquare"         "nonsingular"         ".vcov.avar1" 
-    ## compute.outlier.stats 
-    ##                  "SM" 
-    ## seed : int(0)
-
-## Heteroskedaticity
-
-### Test
-
-We use the White Test for heteroskedaticity by specifying a formula with
-interaction term and sqaure term to the BP Test.
-
-``` r
-bptest(mlr)
-```
-
-    ## 
-    ##  studentized Breusch-Pagan test
-    ## 
-    ## data:  mlr
-    ## BP = 10.854, df = 5, p-value = 0.05435
-
-Heteroskedaticity doesn’t seem present.
-
-### Robust
-
-``` r
-mlrrob <- lmrob(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020, )
-summary(mlrrob)
-#stargazer(mlr)
-```
-
-    ## 
-    ## Call:
-    ## lmrob(formula = CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + 
-    ##     CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020)
-    ##  \--> method = "MM"
-    ## Residuals:
-    ##      Min       1Q   Median       3Q      Max 
-    ## -1.11185 -0.22967  0.01904  0.32530  2.21284 
-    ## 
-    ## Coefficients:
-    ##                             Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)                 0.290339   1.612505   0.180    0.860    
-    ## CITY$workforceCollege_2020  0.079674   0.013457   5.920 3.73e-05 ***
-    ## CITY$direct                 0.020426   0.239663   0.085    0.933    
-    ## CITY$wage2018               0.997127   0.010547  94.539  < 2e-16 ***
-    ## CITY$manufecture2020        0.009307   0.022067   0.422    0.680    
-    ## CITY$hired2020             -0.034386   0.042429  -0.810    0.431    
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Robust residual standard error: 0.4739 
-    ## Multiple R-squared:  0.9985, Adjusted R-squared:  0.998 
-    ## Convergence in 16 IRWLS iterations
-    ## 
-    ## Robustness weights: 
-    ##  observation 8 is an outlier with |weight| <= 4.3e-05 ( < 0.005); 
-    ##  2 weights are ~= 1. The remaining 17 ones are summarized as
-    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    ##  0.5613  0.9289  0.9621  0.9215  0.9790  0.9951 
     ## Algorithmic parameters: 
     ##        tuning.chi                bb        tuning.psi        refine.tol 
     ##         1.548e+00         5.000e-01         4.685e+00         1.000e-07 
@@ -484,6 +484,40 @@ summary(IVmlr)
     ## Multiple R-Squared: 0.9975,  Adjusted R-squared: 0.9966 
     ## Wald test:  1125 on 5 and 14 DF,  p-value: < 2.2e-16
 
+``` r
+IVmlredulevel <- ivreg(CITY$wage2020 ~ CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020 | CITY$eduLevel2020 | CITY$workforceYoung_2010)
+summary(IVmlredulevel)
+```
+
+    ## 
+    ## Call:
+    ## ivreg(formula = CITY$wage2020 ~ CITY$direct + CITY$wage2018 + 
+    ##     CITY$manufecture2020 + CITY$hired2020 | CITY$eduLevel2020 | 
+    ##     CITY$workforceYoung_2010)
+    ## 
+    ## Residuals:
+    ##     Min      1Q  Median      3Q     Max 
+    ## -1.0080 -0.3487 -0.1733  0.3510  1.6426 
+    ## 
+    ## Coefficients:
+    ##                      Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)          -1.48285    2.66812  -0.556    0.587    
+    ## CITY$eduLevel2020     0.09654    0.10087   0.957    0.355    
+    ## CITY$direct          -0.50513    0.81957  -0.616    0.548    
+    ## CITY$wage2018         1.00201    0.05357  18.704 2.66e-11 ***
+    ## CITY$manufecture2020  0.03283    0.04513   0.728    0.479    
+    ## CITY$hired2020       -0.02595    0.06341  -0.409    0.689    
+    ## 
+    ## Diagnostic tests:
+    ##                  df1 df2 statistic p-value
+    ## Weak instruments   1  14     1.049   0.323
+    ## Wu-Hausman         1  13     0.070   0.796
+    ## Sargan             0  NA        NA      NA
+    ## 
+    ## Residual standard error: 0.7003 on 14 degrees of freedom
+    ## Multiple R-Squared: 0.9975,  Adjusted R-squared: 0.9967 
+    ## Wald test:  1138 on 5 and 14 DF,  p-value: < 2.2e-16
+
 # First difference panel data
 
 ## Construct difference term
@@ -526,7 +560,7 @@ eduLevelDiff <- c(CITY$eduLevelDiff1, CITY$eduLevelDiff2)
 plot(workforceCollegeDiff, wageDiff)
 ```
 
-![](cityWage_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+![](cityWage_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
 
 ## College worker share
 

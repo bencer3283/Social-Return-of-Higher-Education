@@ -130,12 +130,6 @@ Heteroskedaticity doesn't seem present.
 ### Robust
 
 # MLR
-```{R, results='hold'}
-mlr <- lm(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020, )
-summary(mlr)
-#stargazer(mlr)
-```
-
 ```{R, results="hold"}
 mlr2 <- lm(wage2020 ~ workforceCollege_2020 + direct + hired2020 + manufecture2020 + service2020 + gender2020 + eduExpense2020 + eduLevel2020 + married2020 + expensePerCapita2020 + unemployment2020 + directEdu ,data = CITY)
 summary(mlr2)
@@ -148,6 +142,29 @@ edu <- lm(wage2020 ~ workforceCollege_2020 + eduExpense2020 + eduLevel2020, data
 summary(edu)
 ```
 
+## Use college worker Share as main explanatory
+```{R, results='hold'}
+mlr <- lm(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020, )
+summary(mlr)
+#stargazer(mlr)
+```
+
+### Heteroskedaticity
+
+#### Test
+We use the White Test for heteroskedaticity by specifying a formula with interaction term and sqaure term to the BP Test.
+```{R}
+bptest(mlr)
+```
+
+#### Robust
+```{R, results='hold'}
+mlrrob <- lmrob(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020, )
+summary(mlrrob)
+#stargazer(mlr)
+```
+
+
 ## Use educational level as main explanatory
 ```{R, results="hold"}
 edulevel <- lm(wage2020 ~ direct + manufecture2020 + eduLevel2020 + hired2020 + wage2018, data = CITY)
@@ -157,27 +174,16 @@ edulevelrob <- lmrob(wage2020 ~ direct + manufecture2020 + eduLevel2020 + hired2
 summary(edulevelrob)
 ```
 
-## Heteroskedaticity
-
-### Test
-We use the White Test for heteroskedaticity by specifying a formula with interaction term and sqaure term to the BP Test.
-```{R}
-bptest(mlr)
-```
-Heteroskedaticity doesn't seem present.
-
-### Robust
-```{R, results='hold'}
-mlrrob <- lmrob(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020, )
-summary(mlrrob)
-#stargazer(mlr)
-```
-
 
 ## Instrumental variable: workforce age structure
 ```{R}
 IVmlr <- ivreg(CITY$wage2020 ~ CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020 | CITY$workforceCollege_2020 | CITY$workforceYoung_2010)
 summary(IVmlr)
+```
+
+```{R}
+IVmlredulevel <- ivreg(CITY$wage2020 ~ CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020 | CITY$eduLevel2020 | CITY$workforceYoung_2010)
+summary(IVmlredulevel)
 ```
 
 # First difference panel data
