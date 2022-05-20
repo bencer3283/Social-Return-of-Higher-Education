@@ -180,6 +180,14 @@ summary(edulevelrob)
 
 
 ## Instrumental variable: workforce age structure
+
+### First stage results
+```{R}
+fs <- lm(CITY$workforceCollege_2020 ~ CITY$workforceYoung_2010)
+summary(fs)
+```
+
+### 2SLS
 ```{R}
 IVmlr <- ivreg(CITY$wage2020 ~ CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020 | CITY$workforceCollege_2020 | CITY$workforceYoung_2010)
 summary(IVmlr)
