@@ -307,19 +307,19 @@ CITYPANEL["direct"] <- c(seq(1, 1, length.out=18), seq(0, 0, length.out=42))
 ```
 ## Random effect model
 ```{R}
-replm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018, model = "random", index = c("city", "year"))
+replm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018, model = "random", index = c("city", "year"))
 summary(replm)
 ```
 
 ## Independent pooling
 ```{R}
-ipplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018, model = "pooling", index = c("city", "year"))
+ipplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018, model = "pooling", index = c("city", "year"))
 summary(ipplm)
 ```
 
 ## Fixd effect
 ```{R}
-ipplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018, model = "within", index = c("city", "year"))
+ipplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018, model = "within", index = c("city", "year"))
 summary(ipplm)
 ```
 
