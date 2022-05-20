@@ -308,7 +308,7 @@ summary(mlrrob)
     ## 
     ## Coefficients:
     ##                             Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)                 0.290339   1.612504   0.180    0.860    
+    ## (Intercept)                 0.290339   1.612505   0.180    0.860    
     ## CITY$workforceCollege_2020  0.079674   0.013457   5.920 3.73e-05 ***
     ## CITY$direct                 0.020426   0.239663   0.085    0.933    
     ## CITY$wage2018               0.997127   0.010547  94.539  < 2e-16 ***
@@ -394,12 +394,12 @@ summary(edulevelrob)
     ## 
     ## Coefficients:
     ##                  Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)     -0.247531   1.673358  -0.148 0.884511    
-    ## direct          -0.106571   0.212691  -0.501 0.624115    
-    ## manufecture2020  0.008061   0.020700   0.389 0.702826    
+    ## (Intercept)     -0.247533   1.673364  -0.148 0.884511    
+    ## direct          -0.106571   0.212692  -0.501 0.624115    
+    ## manufecture2020  0.008061   0.020700   0.389 0.702828    
     ## eduLevel2020     0.079934   0.015476   5.165 0.000143 ***
-    ## hired2020       -0.017022   0.040925  -0.416 0.683765    
-    ## wage2018         0.992269   0.009169 108.224  < 2e-16 ***
+    ## hired2020       -0.017022   0.040925  -0.416 0.683768    
+    ## wage2018         0.992269   0.009169 108.223  < 2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
@@ -411,7 +411,7 @@ summary(edulevelrob)
     ##  observation 8 is an outlier with |weight| = 0 ( < 0.005); 
     ##  The remaining 19 ones are summarized as
     ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    ##  0.5836  0.9200  0.9542  0.9114  0.9736  0.9979 
+    ##  0.5835  0.9200  0.9542  0.9114  0.9736  0.9979 
     ## Algorithmic parameters: 
     ##        tuning.chi                bb        tuning.psi        refine.tol 
     ##         1.548e+00         5.000e-01         4.685e+00         1.000e-07 
@@ -615,12 +615,12 @@ summary(plmrob)
     ## 
     ## Coefficients:
     ##                      Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)           0.67102    0.14124   4.751  3.6e-05 ***
-    ## workforceCollegeDiff -0.10854    0.08611  -1.260  0.21608    
-    ## direct2               0.34046    0.28321   1.202  0.23762    
-    ## serviceDiff           0.35821    0.10309   3.475  0.00142 ** 
-    ## manufectDiff         -0.02771    0.13276  -0.209  0.83589    
-    ## hiredDiff            -0.09186    0.12006  -0.765  0.44951    
+    ## (Intercept)           0.67102    0.14119   4.753 3.59e-05 ***
+    ## workforceCollegeDiff -0.10854    0.08582  -1.265  0.21455    
+    ## direct2               0.34046    0.28344   1.201  0.23799    
+    ## serviceDiff           0.35821    0.10335   3.466  0.00145 ** 
+    ## manufectDiff         -0.02771    0.13001  -0.213  0.83248    
+    ## hiredDiff            -0.09186    0.11940  -0.769  0.44702    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
@@ -791,6 +791,8 @@ summary(plmivedulevel)
 
 # Random effect panel data
 
+## Create panel data frame
+
 ``` r
 CITYPANEL <- expand.grid(year=2018:2020, city=CITY$city)
 
@@ -840,7 +842,14 @@ rm(CITYp)
 CITYPANEL["direct"] <- c(seq(1, 1, length.out=18), seq(0, 0, length.out=42))
 ```
 
-## Random effect model
+``` r
+panelslr <- lm(CITYPANEL$wage2018 ~ CITYPANEL$workforceCollege_2018)
+plot(CITYPANEL$workforceCollege_2018, CITYPANEL$wage2018, main="2018-2020 City Data", xlab="Share of college worker (%)", ylab="Average yearly wage ($10,000)")
+abline(panelslr)
+```
+
+![](cityWage_files/figure-gfm/unnamed-chunk-33-1.png)<!-- --> \#\#
+Random effect model
 
 ``` r
 replm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018, model = "random", index = c("city", "year"))

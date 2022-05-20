@@ -267,6 +267,8 @@ summary(plmivedulevel)
 ```
 
 # Random effect panel data
+
+## Create panel data frame
 ```{R}
 CITYPANEL <- expand.grid(year=2018:2020, city=CITY$city)
 
@@ -312,6 +314,11 @@ for(row in 1:nrow(CITYp)){
 }
 rm(CITYp)
 CITYPANEL["direct"] <- c(seq(1, 1, length.out=18), seq(0, 0, length.out=42))
+```
+```{R}
+panelslr <- lm(CITYPANEL$wage2018 ~ CITYPANEL$workforceCollege_2018)
+plot(CITYPANEL$workforceCollege_2018, CITYPANEL$wage2018, main="2018-2020 City Data", xlab="Share of college worker (%)", ylab="Average yearly wage ($10,000)")
+abline(panelslr)
 ```
 ## Random effect model
 ```{R}
