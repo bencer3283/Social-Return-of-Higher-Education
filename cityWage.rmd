@@ -12,8 +12,10 @@ library(stargazer) #for Latex table generation
 library(lmtest) #for heteroskedaticity test
 library(data.table) #for transpose() function
 library(ivreg) #for instrumental variable 2SLS regression
-library(dplyr)
-library(robustbase)
+library(dplyr) #for mutate
+library(robustbase) #for HAC std error
+library(plm) #for panel data
+library(stringr)
 ```
 
 # Import Data
@@ -89,7 +91,9 @@ CITY <- CITY[-nacol]
 ```
 
 ```{R}
-CITY <- mutate(CITY, lwage2020 = log(wage2020), lwage2019 = log(wage2019), lwage2018 = log(wage2018), directEdu = direct * workforceCollege_2020, graduateShare2020 = graduate2020/workforcePopulation2020)
+CITY <- mutate(CITY, lwage2020 = log(wage2020), lwage2019 = log(wage2019), lwage2018 = log(wage2018), 
+directEdu2020 = direct * workforceCollege_2020, directEdu2019 = direct * workforceCollege_2019, directEdu2018 = direct * workforceCollege_2018, 
+graduateShare2020 = graduate2020/workforcePopulation2020)
 ```
 
 # SLR with college graduates number
@@ -131,7 +135,7 @@ Heteroskedaticity doesn't seem present.
 
 # MLR
 ```{R, results="hold"}
-mlr2 <- lm(wage2020 ~ workforceCollege_2020 + direct + hired2020 + manufecture2020 + service2020 + gender2020 + eduExpense2020 + eduLevel2020 + married2020 + expensePerCapita2020 + unemployment2020 + directEdu ,data = CITY)
+mlr2 <- lm(wage2020 ~ workforceCollege_2020 + direct + hired2020 + manufecture2020 + service2020 + gender2020 + eduExpense2020 + eduLevel2020 + married2020 + expensePerCapita2020 + unemployment2020 + directEdu2020 ,data = CITY)
 summary(mlr2)
 bptest(mlr2)
 ```
@@ -252,4 +256,75 @@ summary(plmedulevelrob)
 ```{R}
 plmivedulevel <- ivreg(wageDiff ~ direct2 + serviceDiff + hiredDiff | eduLevelDiff | workforceYoungDiff)
 summary(plmivedulevel)
+```
+
+# Random effect panel data
+```{R}
+CITYPANEL <- expand.grid(year=2018:2020, city=CITY$city)
+
+for(row in 1:nrow(CITY)){
+    for(col in 1:ncol(CITY)){
+        if(row == 1){
+            if(str_detect(colnames(CITY)[col], "2018")){
+                CITYPANEL[colnames(CITY)[col]] <- NA
+                CITYPANEL[colnames(CITY)[col]][(row-1)*3+1,] <- CITY[row, col]
+            }
+        }
+        else {
+            if(str_detect(colnames(CITY)[col], "2018")){
+                CITYPANEL[colnames(CITY)[col]][(row-1)*3+1,] <- CITY[row, col]
+            }
+        }
+        
+    }
+    
+}
+```
+```{R}
+for(row in 1:nrow(CITY)){
+    t <- 3
+    for(col in 1:ncol(CITY)){
+        if(str_detect(colnames(CITY)[col], "2019")){
+            CITYPANEL[(row-1)*3+2, t] <- CITY[row, col]
+            t <- t + 1
+        }    
+    }
+}
+```
+```{R}
+CITYp <- CITY[-c(5, ncol(CITY))] #deleting those with only 2020 data
+for(row in 1:nrow(CITYp)){
+    t <- 3
+    for(col in 1:ncol(CITYp)){
+        if(str_detect(colnames(CITYp)[col], "2020")){
+            CITYPANEL[row*3, t] <- CITYp[row, col]
+            t <- t + 1
+        }    
+    }
+}
+rm(CITYp)
+CITYPANEL["direct"] <- c(seq(1, 1, length.out=18), seq(0, 0, length.out=42))
+```
+## Random effect model
+```{R}
+replm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018, model = "random", index = c("city", "year"))
+summary(replm)
+```
+
+## Independent pooling
+```{R}
+ipplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018, model = "pooling", index = c("city", "year"))
+summary(ipplm)
+```
+
+## Fixd effect
+```{R}
+ipplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018, model = "within", index = c("city", "year"))
+summary(ipplm)
+```
+
+## First differenced
+```{R}
+ipplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018, model = "fd", index = c("city", "year"))
+summary(ipplm)
 ```

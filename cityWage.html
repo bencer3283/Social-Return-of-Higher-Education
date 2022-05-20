@@ -607,8 +607,10 @@ body {
 <a class="sourceLine" id="cb1-4" title="4"><span class="kw">library</span>(lmtest) <span class="co">#for heteroskedaticity test</span></a>
 <a class="sourceLine" id="cb1-5" title="5"><span class="kw">library</span>(data.table) <span class="co">#for transpose() function</span></a>
 <a class="sourceLine" id="cb1-6" title="6"><span class="kw">library</span>(ivreg) <span class="co">#for instrumental variable 2SLS regression</span></a>
-<a class="sourceLine" id="cb1-7" title="7"><span class="kw">library</span>(dplyr)</a>
-<a class="sourceLine" id="cb1-8" title="8"><span class="kw">library</span>(robustbase)</a></code></pre></div>
+<a class="sourceLine" id="cb1-7" title="7"><span class="kw">library</span>(dplyr) <span class="co">#for mutate</span></a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="kw">library</span>(robustbase) <span class="co">#for HAC std error</span></a>
+<a class="sourceLine" id="cb1-9" title="9"><span class="kw">library</span>(plm) <span class="co">#for panel data</span></a>
+<a class="sourceLine" id="cb1-10" title="10"><span class="kw">library</span>(stringr)</a></code></pre></div>
 <h1 id="import-data">Import Data</h1>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">rawGraduate &lt;-<span class="st"> </span><span class="kw">read_excel</span>(<span class="st">&quot;109cityu.xls&quot;</span>)</a>
 <a class="sourceLine" id="cb2-2" title="2">rawWage &lt;-<span class="st"> </span><span class="kw">read_excel</span>(<span class="st">&quot;workplaceWageCity.xlsx&quot;</span>)</a>
@@ -649,7 +651,9 @@ body {
 <a class="sourceLine" id="cb7-5" title="5">    }</a>
 <a class="sourceLine" id="cb7-6" title="6">}</a>
 <a class="sourceLine" id="cb7-7" title="7">CITY &lt;-<span class="st"> </span>CITY[<span class="op">-</span>nacol]</a></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">CITY &lt;-<span class="st"> </span><span class="kw">mutate</span>(CITY, <span class="dt">lwage2020 =</span> <span class="kw">log</span>(wage2020), <span class="dt">lwage2019 =</span> <span class="kw">log</span>(wage2019), <span class="dt">lwage2018 =</span> <span class="kw">log</span>(wage2018), <span class="dt">directEdu =</span> direct <span class="op">*</span><span class="st"> </span>workforceCollege_<span class="dv">2020</span>, <span class="dt">graduateShare2020 =</span> graduate2020<span class="op">/</span>workforcePopulation2020)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">CITY &lt;-<span class="st"> </span><span class="kw">mutate</span>(CITY, <span class="dt">lwage2020 =</span> <span class="kw">log</span>(wage2020), <span class="dt">lwage2019 =</span> <span class="kw">log</span>(wage2019), <span class="dt">lwage2018 =</span> <span class="kw">log</span>(wage2018), </a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="dt">directEdu2020 =</span> direct <span class="op">*</span><span class="st"> </span>workforceCollege_<span class="dv">2020</span>, <span class="dt">directEdu2019 =</span> direct <span class="op">*</span><span class="st"> </span>workforceCollege_<span class="dv">2019</span>, <span class="dt">directEdu2018 =</span> direct <span class="op">*</span><span class="st"> </span>workforceCollege_<span class="dv">2018</span>, </a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="dt">graduateShare2020 =</span> graduate2020<span class="op">/</span>workforcePopulation2020)</a></code></pre></div>
 <h1 id="slr-with-college-graduates-number">SLR with college graduates number</h1>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">slr &lt;-<span class="st"> </span><span class="kw">lm</span>(CITY<span class="op">$</span>wage2020 <span class="op">~</span><span class="st"> </span>CITY<span class="op">$</span>graduate2020, )</a>
 <a class="sourceLine" id="cb9-2" title="2"><span class="kw">summary</span>(slr)</a>
@@ -717,7 +721,7 @@ body {
 <p>Heteroskedaticity doesn’t seem present.</p>
 <h3 id="robust">Robust</h3>
 <h1 id="mlr">MLR</h1>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1">mlr2 &lt;-<span class="st"> </span><span class="kw">lm</span>(wage2020 <span class="op">~</span><span class="st"> </span>workforceCollege_<span class="dv">2020</span> <span class="op">+</span><span class="st"> </span>direct <span class="op">+</span><span class="st"> </span>hired2020 <span class="op">+</span><span class="st"> </span>manufecture2020 <span class="op">+</span><span class="st"> </span>service2020 <span class="op">+</span><span class="st"> </span>gender2020 <span class="op">+</span><span class="st"> </span>eduExpense2020 <span class="op">+</span><span class="st"> </span>eduLevel2020 <span class="op">+</span><span class="st"> </span>married2020 <span class="op">+</span><span class="st"> </span>expensePerCapita2020 <span class="op">+</span><span class="st"> </span>unemployment2020 <span class="op">+</span><span class="st"> </span>directEdu ,<span class="dt">data =</span> CITY)</a>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1">mlr2 &lt;-<span class="st"> </span><span class="kw">lm</span>(wage2020 <span class="op">~</span><span class="st"> </span>workforceCollege_<span class="dv">2020</span> <span class="op">+</span><span class="st"> </span>direct <span class="op">+</span><span class="st"> </span>hired2020 <span class="op">+</span><span class="st"> </span>manufecture2020 <span class="op">+</span><span class="st"> </span>service2020 <span class="op">+</span><span class="st"> </span>gender2020 <span class="op">+</span><span class="st"> </span>eduExpense2020 <span class="op">+</span><span class="st"> </span>eduLevel2020 <span class="op">+</span><span class="st"> </span>married2020 <span class="op">+</span><span class="st"> </span>expensePerCapita2020 <span class="op">+</span><span class="st"> </span>unemployment2020 <span class="op">+</span><span class="st"> </span>directEdu2020 ,<span class="dt">data =</span> CITY)</a>
 <a class="sourceLine" id="cb17-2" title="2"><span class="kw">summary</span>(mlr2)</a>
 <a class="sourceLine" id="cb17-3" title="3"><span class="kw">bptest</span>(mlr2)</a></code></pre></div>
 <pre><code>## 
@@ -725,7 +729,7 @@ body {
 ## lm(formula = wage2020 ~ workforceCollege_2020 + direct + hired2020 + 
 ##     manufecture2020 + service2020 + gender2020 + eduExpense2020 + 
 ##     eduLevel2020 + married2020 + expensePerCapita2020 + unemployment2020 + 
-##     directEdu, data = CITY)
+##     directEdu2020, data = CITY)
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
@@ -745,7 +749,7 @@ body {
 ## married2020            1.504e+00  1.141e+00   1.318  0.22909   
 ## expensePerCapita2020   2.899e-03  6.514e-04   4.450  0.00297 **
 ## unemployment2020      -3.147e+01  2.121e+01  -1.483  0.18155   
-## directEdu             -1.531e+00  4.155e-01  -3.686  0.00780 **
+## directEdu2020         -1.531e+00  4.155e-01  -3.686  0.00780 **
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
@@ -916,12 +920,12 @@ body {
 ## 
 ## Coefficients:
 ##                  Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)     -0.247532   1.673361  -0.148 0.884511    
+## (Intercept)     -0.247531   1.673359  -0.148 0.884511    
 ## direct          -0.106571   0.212691  -0.501 0.624115    
-## manufecture2020  0.008061   0.020700   0.389 0.702827    
+## manufecture2020  0.008061   0.020700   0.389 0.702826    
 ## eduLevel2020     0.079934   0.015476   5.165 0.000143 ***
-## hired2020       -0.017022   0.040925  -0.416 0.683767    
-## wage2018         0.992269   0.009169 108.223  &lt; 2e-16 ***
+## hired2020       -0.017022   0.040925  -0.416 0.683766    
+## wage2018         0.992269   0.009169 108.224  &lt; 2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
@@ -933,7 +937,7 @@ body {
 ##  observation 8 is an outlier with |weight| = 0 ( &lt; 0.005); 
 ##  The remaining 19 ones are summarized as
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.5835  0.9200  0.9542  0.9114  0.9736  0.9979 
+##  0.5836  0.9200  0.9542  0.9114  0.9736  0.9979 
 ## Algorithmic parameters: 
 ##        tuning.chi                bb        tuning.psi        refine.tol 
 ##         1.548e+00         5.000e-01         4.685e+00         1.000e-07 
@@ -1252,6 +1256,184 @@ body {
 ## Residual standard error: 0.75 on 35 degrees of freedom
 ## Multiple R-Squared: -0.01025,    Adjusted R-squared: -0.1257 
 ## Wald test: 1.819 on 4 and 35 DF,  p-value: 0.1471
+</code></pre>
+<h1 id="random-effect-panel-data">Random effect panel data</h1>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" title="1">CITYPANEL &lt;-<span class="st"> </span><span class="kw">expand.grid</span>(<span class="dt">year=</span><span class="dv">2018</span><span class="op">:</span><span class="dv">2020</span>, <span class="dt">city=</span>CITY<span class="op">$</span>city)</a>
+<a class="sourceLine" id="cb43-2" title="2"></a>
+<a class="sourceLine" id="cb43-3" title="3"><span class="cf">for</span>(row <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(CITY)){</a>
+<a class="sourceLine" id="cb43-4" title="4">    <span class="cf">for</span>(col <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(CITY)){</a>
+<a class="sourceLine" id="cb43-5" title="5">        <span class="cf">if</span>(row <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){</a>
+<a class="sourceLine" id="cb43-6" title="6">            <span class="cf">if</span>(<span class="kw">str_detect</span>(<span class="kw">colnames</span>(CITY)[col], <span class="st">&quot;2018&quot;</span>)){</a>
+<a class="sourceLine" id="cb43-7" title="7">                CITYPANEL[<span class="kw">colnames</span>(CITY)[col]] &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb43-8" title="8">                CITYPANEL[<span class="kw">colnames</span>(CITY)[col]][(row<span class="dv">-1</span>)<span class="op">*</span><span class="dv">3</span><span class="op">+</span><span class="dv">1</span>,] &lt;-<span class="st"> </span>CITY[row, col]</a>
+<a class="sourceLine" id="cb43-9" title="9">            }</a>
+<a class="sourceLine" id="cb43-10" title="10">        }</a>
+<a class="sourceLine" id="cb43-11" title="11">        <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb43-12" title="12">            <span class="cf">if</span>(<span class="kw">str_detect</span>(<span class="kw">colnames</span>(CITY)[col], <span class="st">&quot;2018&quot;</span>)){</a>
+<a class="sourceLine" id="cb43-13" title="13">                CITYPANEL[<span class="kw">colnames</span>(CITY)[col]][(row<span class="dv">-1</span>)<span class="op">*</span><span class="dv">3</span><span class="op">+</span><span class="dv">1</span>,] &lt;-<span class="st"> </span>CITY[row, col]</a>
+<a class="sourceLine" id="cb43-14" title="14">            }</a>
+<a class="sourceLine" id="cb43-15" title="15">        }</a>
+<a class="sourceLine" id="cb43-16" title="16">        </a>
+<a class="sourceLine" id="cb43-17" title="17">    }</a>
+<a class="sourceLine" id="cb43-18" title="18">    </a>
+<a class="sourceLine" id="cb43-19" title="19">}</a></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" title="1"><span class="cf">for</span>(row <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(CITY)){</a>
+<a class="sourceLine" id="cb44-2" title="2">    t &lt;-<span class="st"> </span><span class="dv">3</span></a>
+<a class="sourceLine" id="cb44-3" title="3">    <span class="cf">for</span>(col <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(CITY)){</a>
+<a class="sourceLine" id="cb44-4" title="4">        <span class="cf">if</span>(<span class="kw">str_detect</span>(<span class="kw">colnames</span>(CITY)[col], <span class="st">&quot;2019&quot;</span>)){</a>
+<a class="sourceLine" id="cb44-5" title="5">            CITYPANEL[(row<span class="dv">-1</span>)<span class="op">*</span><span class="dv">3</span><span class="op">+</span><span class="dv">2</span>, t] &lt;-<span class="st"> </span>CITY[row, col]</a>
+<a class="sourceLine" id="cb44-6" title="6">            t &lt;-<span class="st"> </span>t <span class="op">+</span><span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb44-7" title="7">        }    </a>
+<a class="sourceLine" id="cb44-8" title="8">    }</a>
+<a class="sourceLine" id="cb44-9" title="9">}</a></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" title="1">CITYp &lt;-<span class="st"> </span>CITY[<span class="op">-</span><span class="kw">c</span>(<span class="dv">5</span>, <span class="kw">ncol</span>(CITY))] <span class="co">#deleting those with only 2020 data</span></a>
+<a class="sourceLine" id="cb45-2" title="2"><span class="cf">for</span>(row <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(CITYp)){</a>
+<a class="sourceLine" id="cb45-3" title="3">    t &lt;-<span class="st"> </span><span class="dv">3</span></a>
+<a class="sourceLine" id="cb45-4" title="4">    <span class="cf">for</span>(col <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(CITYp)){</a>
+<a class="sourceLine" id="cb45-5" title="5">        <span class="cf">if</span>(<span class="kw">str_detect</span>(<span class="kw">colnames</span>(CITYp)[col], <span class="st">&quot;2020&quot;</span>)){</a>
+<a class="sourceLine" id="cb45-6" title="6">            CITYPANEL[row<span class="op">*</span><span class="dv">3</span>, t] &lt;-<span class="st"> </span>CITYp[row, col]</a>
+<a class="sourceLine" id="cb45-7" title="7">            t &lt;-<span class="st"> </span>t <span class="op">+</span><span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb45-8" title="8">        }    </a>
+<a class="sourceLine" id="cb45-9" title="9">    }</a>
+<a class="sourceLine" id="cb45-10" title="10">}</a>
+<a class="sourceLine" id="cb45-11" title="11"><span class="kw">rm</span>(CITYp)</a>
+<a class="sourceLine" id="cb45-12" title="12">CITYPANEL[<span class="st">&quot;direct&quot;</span>] &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">seq</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dt">length.out=</span><span class="dv">18</span>), <span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dt">length.out=</span><span class="dv">42</span>))</a></code></pre></div>
+<h2 id="random-effect-model">Random effect model</h2>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" title="1">replm &lt;-<span class="st"> </span><span class="kw">plm</span>(<span class="dt">data =</span> CITYPANEL, wage2018 <span class="op">~</span><span class="st"> </span>workforceCollege_<span class="dv">2018</span> <span class="op">+</span><span class="st"> </span>manufecture2018 <span class="op">+</span><span class="st"> </span>hired2018 <span class="op">+</span><span class="st"> </span>direct <span class="op">+</span><span class="st"> </span>directEdu2018, <span class="dt">model =</span> <span class="st">&quot;random&quot;</span>, <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;city&quot;</span>, <span class="st">&quot;year&quot;</span>))</a>
+<a class="sourceLine" id="cb46-2" title="2"><span class="kw">summary</span>(replm)</a></code></pre></div>
+<pre><code>## Oneway (individual) effect Random Effect Model 
+##    (Swamy-Arora&#39;s transformation)
+## 
+## Call:
+## plm(formula = wage2018 ~ workforceCollege_2018 + manufecture2018 + 
+##     hired2018 + direct + directEdu2018, data = CITYPANEL, model = &quot;random&quot;, 
+##     index = c(&quot;city&quot;, &quot;year&quot;))
+## 
+## Balanced Panel: n = 20, T = 3, N = 60
+## 
+## Effects:
+##                   var std.dev share
+## idiosyncratic  0.7845  0.8857 0.011
+## individual    71.4527  8.4530 0.989
+## theta: 0.9396
+## 
+## Residuals:
+##      Min.   1st Qu.    Median   3rd Qu.      Max. 
+## -2.668574 -0.596220  0.016993  0.372533  2.609920 
+## 
+## Coefficients:
+##                        Estimate Std. Error z-value  Pr(&gt;|z|)    
+## (Intercept)           35.591425  12.240488  2.9077  0.003641 ** 
+## workforceCollege_2018  0.502758   0.124346  4.0432 5.273e-05 ***
+## manufecture2018        0.043399   0.146067  0.2971  0.766380    
+## hired2018              0.028898   0.190164  0.1520  0.879216    
+## direct                -5.802548  12.087020 -0.4801  0.631182    
+## directEdu2018          0.075313   0.212836  0.3539  0.723450    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Total Sum of Squares:    72.347
+## Residual Sum of Squares: 46.059
+## R-Squared:      0.36337
+## Adj. R-Squared: 0.30442
+## Chisq: 30.8218 on 5 DF, p-value: 1.0158e-05
+</code></pre>
+<h2 id="independent-pooling">Independent pooling</h2>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" title="1">ipplm &lt;-<span class="st"> </span><span class="kw">plm</span>(<span class="dt">data =</span> CITYPANEL, wage2018 <span class="op">~</span><span class="st"> </span>workforceCollege_<span class="dv">2018</span> <span class="op">+</span><span class="st"> </span>manufecture2018 <span class="op">+</span><span class="st"> </span>hired2018 <span class="op">+</span><span class="st"> </span>direct <span class="op">+</span><span class="st"> </span>directEdu2018, <span class="dt">model =</span> <span class="st">&quot;pooling&quot;</span>, <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;city&quot;</span>, <span class="st">&quot;year&quot;</span>))</a>
+<a class="sourceLine" id="cb48-2" title="2"><span class="kw">summary</span>(ipplm)</a></code></pre></div>
+<pre><code>## Pooling Model
+## 
+## Call:
+## plm(formula = wage2018 ~ workforceCollege_2018 + manufecture2018 + 
+##     hired2018 + direct + directEdu2018, data = CITYPANEL, model = &quot;pooling&quot;, 
+##     index = c(&quot;city&quot;, &quot;year&quot;))
+## 
+## Balanced Panel: n = 20, T = 3, N = 60
+## 
+## Residuals:
+##      Min.   1st Qu.    Median   3rd Qu.      Max. 
+## -15.75276  -3.55732  -0.29039   3.75493  18.54212 
+## 
+## Coefficients:
+##                         Estimate Std. Error t-value  Pr(&gt;|t|)    
+## (Intercept)            11.408969  12.570023  0.9076 0.3681049    
+## workforceCollege_2018   0.600251   0.181566  3.3060 0.0016866 ** 
+## manufecture2018         0.540737   0.133157  4.0609 0.0001591 ***
+## hired2018               0.074992   0.251350  0.2984 0.7665761    
+## direct                -30.658082  12.521187 -2.4485 0.0176239 *  
+## directEdu2018           0.472876   0.232598  2.0330 0.0469792 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Total Sum of Squares:    7852.4
+## Residual Sum of Squares: 3064.6
+## R-Squared:      0.60972
+## Adj. R-Squared: 0.57359
+## F-statistic: 16.8728 on 5 and 54 DF, p-value: 5.1566e-10
+</code></pre>
+<h2 id="fixd-effect">Fixd effect</h2>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" title="1">ipplm &lt;-<span class="st"> </span><span class="kw">plm</span>(<span class="dt">data =</span> CITYPANEL, wage2018 <span class="op">~</span><span class="st"> </span>workforceCollege_<span class="dv">2018</span> <span class="op">+</span><span class="st"> </span>manufecture2018 <span class="op">+</span><span class="st"> </span>hired2018 <span class="op">+</span><span class="st"> </span>direct <span class="op">+</span><span class="st"> </span>directEdu2018, <span class="dt">model =</span> <span class="st">&quot;within&quot;</span>, <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;city&quot;</span>, <span class="st">&quot;year&quot;</span>))</a>
+<a class="sourceLine" id="cb50-2" title="2"><span class="kw">summary</span>(ipplm)</a></code></pre></div>
+<pre><code>## Oneway (individual) effect Within Model
+## 
+## Call:
+## plm(formula = wage2018 ~ workforceCollege_2018 + manufecture2018 + 
+##     hired2018 + direct + directEdu2018, data = CITYPANEL, model = &quot;within&quot;, 
+##     index = c(&quot;city&quot;, &quot;year&quot;))
+## 
+## Balanced Panel: n = 20, T = 3, N = 60
+## 
+## Residuals:
+##       Min.    1st Qu.     Median    3rd Qu.       Max. 
+## -2.4527508 -0.3176057  0.0032823  0.3948361  1.7517181 
+## 
+## Coefficients:
+##                        Estimate Std. Error t-value Pr(&gt;|t|)   
+## workforceCollege_2018  0.382083   0.134217  2.8468 0.007249 **
+## manufecture2018       -0.188689   0.174526 -1.0811 0.286820   
+## hired2018              0.027325   0.206275  0.1325 0.895353   
+## directEdu2018          0.093729   0.242506  0.3865 0.701400   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Total Sum of Squares:    43.873
+## Residual Sum of Squares: 28.243
+## R-Squared:      0.35626
+## Adj. R-Squared: -0.055013
+## F-statistic: 4.98087 on 4 and 36 DF, p-value: 0.0026713
+</code></pre>
+<h2 id="first-differenced">First differenced</h2>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" title="1">ipplm &lt;-<span class="st"> </span><span class="kw">plm</span>(<span class="dt">data =</span> CITYPANEL, wage2018 <span class="op">~</span><span class="st"> </span>workforceCollege_<span class="dv">2018</span> <span class="op">+</span><span class="st"> </span>manufecture2018 <span class="op">+</span><span class="st"> </span>hired2018 <span class="op">+</span><span class="st"> </span>direct <span class="op">+</span><span class="st"> </span>directEdu2018, <span class="dt">model =</span> <span class="st">&quot;fd&quot;</span>, <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;city&quot;</span>, <span class="st">&quot;year&quot;</span>))</a>
+<a class="sourceLine" id="cb52-2" title="2"><span class="kw">summary</span>(ipplm)</a></code></pre></div>
+<pre><code>## Oneway (individual) effect First-Difference Model
+## 
+## Call:
+## plm(formula = wage2018 ~ workforceCollege_2018 + manufecture2018 + 
+##     hired2018 + direct + directEdu2018, data = CITYPANEL, model = &quot;fd&quot;, 
+##     index = c(&quot;city&quot;, &quot;year&quot;))
+## 
+## Balanced Panel: n = 20, T = 3, N = 60
+## Observations used in estimation: 40
+## 
+## Residuals:
+##      Min.   1st Qu.    Median   3rd Qu.      Max. 
+## -0.984543 -0.565338 -0.099295  0.557908  1.346300 
+## 
+## Coefficients:
+##                        Estimate Std. Error t-value  Pr(&gt;|t|)    
+## (Intercept)            0.826117   0.137400  6.0125 7.434e-07 ***
+## workforceCollege_2018  0.070713   0.109159  0.6478    0.5213    
+## manufecture2018       -0.163538   0.118612 -1.3788    0.1767    
+## hired2018              0.023854   0.123571  0.1930    0.8480    
+## directEdu2018         -0.161786   0.174155 -0.9290    0.3593    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Total Sum of Squares:    19.49
+## Residual Sum of Squares: 17.528
+## R-Squared:      0.10066
+## Adj. R-Squared: -0.0021265
+## F-statistic: 0.979311 on 4 and 35 DF, p-value: 0.43137
 </code></pre>
 
 </body>
