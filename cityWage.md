@@ -799,13 +799,13 @@ CITYPANEL <- expand.grid(year=2018:2020, city=CITY$city)
 for(row in 1:nrow(CITY)){
     for(col in 1:ncol(CITY)){
         if(row == 1){
-            if(str_detect(colnames(CITY)[col], "2018")){
+            if(str_detect(colnames(CITY)[col], "2018") | str_detect(colnames(CITY)[col], "workforceYoung_2013")){
                 CITYPANEL[colnames(CITY)[col]] <- NA
                 CITYPANEL[colnames(CITY)[col]][(row-1)*3+1,] <- CITY[row, col]
             }
         }
         else {
-            if(str_detect(colnames(CITY)[col], "2018")){
+            if(str_detect(colnames(CITY)[col], "2018") | str_detect(colnames(CITY)[col], "workforceYoung_2013")){
                 CITYPANEL[colnames(CITY)[col]][(row-1)*3+1,] <- CITY[row, col]
             }
         }
@@ -819,7 +819,7 @@ for(row in 1:nrow(CITY)){
 for(row in 1:nrow(CITY)){
     t <- 3
     for(col in 1:ncol(CITY)){
-        if(str_detect(colnames(CITY)[col], "2019")){
+        if(str_detect(colnames(CITY)[col], "2019") | str_detect(colnames(CITY)[col], "workforceYoung_2014")){
             CITYPANEL[(row-1)*3+2, t] <- CITY[row, col]
             t <- t + 1
         }    
@@ -832,7 +832,7 @@ CITYp <- CITY[-c(5, ncol(CITY))] #deleting those with only 2020 data
 for(row in 1:nrow(CITYp)){
     t <- 3
     for(col in 1:ncol(CITYp)){
-        if(str_detect(colnames(CITYp)[col], "2020")){
+        if(str_detect(colnames(CITYp)[col], "2020") | str_detect(colnames(CITY)[col], "workforceYoung_2015")){
             CITYPANEL[row*3, t] <- CITYp[row, col]
             t <- t + 1
         }    
@@ -848,8 +848,9 @@ plot(CITYPANEL$workforceCollege_2018, CITYPANEL$wage2018, main="2018-2020 City D
 abline(panelslr)
 ```
 
-![](cityWage_files/figure-gfm/unnamed-chunk-33-1.png)<!-- --> \#\#
-Random effect model
+![](cityWage_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->
+
+## Random effect model
 
 ``` r
 replm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018, model = "random", index = c("city", "year"))
@@ -893,6 +894,93 @@ summary(replm)
     ## R-Squared:      0.53925
     ## Adj. R-Squared: 0.48709
     ## Chisq: 62.0308 on 6 DF, p-value: 1.739e-11
+
+### with IV
+
+``` r
+replmivfs <- plm(data = CITYPANEL, 
+workforceCollege_2018 ~ workforceYoung_2013, model = "random", index = c("city", "year"))
+summary(replmivfs)
+```
+
+    ## Oneway (individual) effect Random Effect Model 
+    ##    (Swamy-Arora's transformation)
+    ## 
+    ## Call:
+    ## plm(formula = workforceCollege_2018 ~ workforceYoung_2013, data = CITYPANEL, 
+    ##     model = "random", index = c("city", "year"))
+    ## 
+    ## Balanced Panel: n = 20, T = 3, N = 60
+    ## 
+    ## Effects:
+    ##                   var std.dev share
+    ## idiosyncratic   1.801   1.342 0.016
+    ## individual    107.888  10.387 0.984
+    ## theta: 0.9256
+    ## 
+    ## Residuals:
+    ##     Min.  1st Qu.   Median  3rd Qu.     Max. 
+    ## -3.10445 -0.73321 -0.13654  0.84206  3.03858 
+    ## 
+    ## Coefficients:
+    ##                      Estimate Std. Error z-value Pr(>|z|)    
+    ## (Intercept)         47.100326   4.891112  9.6298   <2e-16 ***
+    ## workforceYoung_2013  0.082319   0.583955  0.1410   0.8879    
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Total Sum of Squares:    113.21
+    ## Residual Sum of Squares: 113.17
+    ## R-Squared:      0.0003425
+    ## Adj. R-Squared: -0.016893
+    ## Chisq: 0.0198718 on 1 DF, p-value: 0.8879
+
+``` r
+replmiv <- plm(data = CITYPANEL, 
+wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018 | 
+manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018 + workforceYoung_2013, model = "random", index = c("city", "year"))
+summary(replmiv)
+```
+
+    ## Oneway (individual) effect Random Effect Model 
+    ##    (Swamy-Arora's transformation)
+    ## Instrumental variable estimation
+    ##    (Balestra-Varadharajan-Krishnakumar's transformation)
+    ## 
+    ## Call:
+    ## plm(formula = wage2018 ~ workforceCollege_2018 + manufecture2018 + 
+    ##     hired2018 + direct + directEdu2018 + expensePerCapita2018 | 
+    ##     manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018 + 
+    ##         workforceYoung_2013, data = CITYPANEL, model = "random", 
+    ##     index = c("city", "year"))
+    ## 
+    ## Balanced Panel: n = 20, T = 3, N = 60
+    ## 
+    ## Effects:
+    ##                  var std.dev share
+    ## idiosyncratic  1.395   1.181 0.027
+    ## individual    50.417   7.100 0.973
+    ## theta: 0.9044
+    ## 
+    ## Residuals:
+    ##     Min.  1st Qu.   Median  3rd Qu.     Max. 
+    ## -4.69398 -0.91292 -0.18426  1.14416  3.16851 
+    ## 
+    ## Coefficients:
+    ##                          Estimate  Std. Error z-value Pr(>|z|)
+    ## (Intercept)            2.1315e+01  2.2243e+01  0.9582   0.3379
+    ## workforceCollege_2018  1.7764e+00  7.6355e+00  0.2326   0.8160
+    ## manufecture2018        5.8521e-01  2.0972e+00  0.2790   0.7802
+    ## hired2018             -8.4983e-01  4.7055e+00 -0.1806   0.8567
+    ## direct                 3.5758e+01  2.6417e+02  0.1354   0.8923
+    ## directEdu2018         -8.5300e-01  5.5344e+00 -0.1541   0.8775
+    ## expensePerCapita2018   2.5234e-04  3.4546e-03  0.0730   0.9418
+    ## 
+    ## Total Sum of Squares:    115.25
+    ## Residual Sum of Squares: 165.82
+    ## R-Squared:      0.35206
+    ## Adj. R-Squared: 0.27871
+    ## Chisq: 17.1478 on 6 DF, p-value: 0.0087552
 
 ## Independent pooling
 
