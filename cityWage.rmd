@@ -58,7 +58,7 @@ CITY <- workforceTranspose("workforceOld", 42, 53)
 CITY <- workforceTranspose("workforceRetired", 55, 66)
 ```
 
-```{R}
+```{R, warning=FALSE, results='hide', message=FALSE}
 for(i in 2:ncol(rawCityAddition)) {
     if(!is.na(rawCityAddition[2, i])){
         CITY <- cbind(CITY, as.numeric(unlist(rawCityAddition[1:20, i])))
@@ -89,7 +89,7 @@ CITY <- CITY[-nacol]
 ```
 
 ```{R}
-CITY <- mutate(CITY, lwage2020 = log(wage2020), lwage2019 = log(wage2019), lwage2018 = log(wage2018), directEdu = direct * workforceCollege_2020)
+CITY <- mutate(CITY, lwage2020 = log(wage2020), lwage2019 = log(wage2019), lwage2018 = log(wage2018), directEdu = direct * workforceCollege_2020, graduateShare2020 = graduate2020/workforcePopulation2020)
 ```
 
 # SLR with college graduates number
@@ -97,6 +97,7 @@ CITY <- mutate(CITY, lwage2020 = log(wage2020), lwage2019 = log(wage2019), lwage
 slr <- lm(CITY$wage2020 ~ CITY$graduate2020, )
 summary(slr)
 #stargazer(slr)
+slr1 <- lm(CITY$wage2020 ~ CITY$graduateShare2020)
 ```
 
 ```{R}
@@ -121,7 +122,6 @@ abline(slr2)
 ## Heteroskedaticity
 
 ### Test
-We use the White Test for heteroskedaticity by specifying a formula with interaction term and sqaure term to the BP Test.
 ```{R}
 bptest(slr2, ~ CITY$workforceCollege_2020 + I(CITY$workforceCollege_2020^2))
 ```
@@ -152,7 +152,7 @@ summary(mlr)
 ### Heteroskedaticity
 
 #### Test
-We use the White Test for heteroskedaticity by specifying a formula with interaction term and sqaure term to the BP Test.
+
 ```{R}
 bptest(mlr)
 ```
