@@ -146,7 +146,7 @@ edu <- lm(wage2020 ~ workforceCollege_2020 + eduExpense2020 + eduLevel2020, data
 summary(edu)
 ```
 
-## Use college worker Share as main explanatory
+## Use college worker share as main explanatory
 ```{R, results='hold'}
 mlr <- lm(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020, )
 summary(mlr)
@@ -165,7 +165,7 @@ bptest(mlr)
 ```{R, results='hold'}
 mlrrob <- lmrob(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020, )
 summary(mlrrob)
-#stargazer(mlr)
+#stargazer(mlrrob)
 ```
 
 
@@ -243,6 +243,7 @@ plot(workforceCollegeDiff, wageDiff)
 ```{R, results='hold'}
 plm <- lm(wageDiff ~ workforceCollegeDiff + direct2 + serviceDiff + manufectDiff + hiredDiff)
 summary(plm)
+bptest(plm)
 plmrob <- lmrob(wageDiff ~ workforceCollegeDiff + direct2 + serviceDiff + manufectDiff + hiredDiff)
 summary(plmrob)
 ```
@@ -302,7 +303,7 @@ for(row in 1:nrow(CITY)){
 }
 ```
 ```{R}
-CITYp <- CITY[-c(5, ncol(CITY))] #deleting those with only 2020 data
+CITYp <- CITY[-c(5, 103)] #deleting those with only 2020 data
 for(row in 1:nrow(CITYp)){
     t <- 3
     for(col in 1:ncol(CITYp)){
@@ -314,6 +315,19 @@ for(row in 1:nrow(CITYp)){
 }
 rm(CITYp)
 CITYPANEL["direct"] <- c(seq(1, 1, length.out=18), seq(0, 0, length.out=42))
+```
+```{R}
+d2018 <- c(1, 0, 0)
+d2019 <- c(0, 1, 0)
+d2020 <- c(0, 0, 1)
+for(n in 1:19){
+    d2018 <- c(d2018, c(1, 0, 0))
+    d2019 <- c(d2019, c(0, 1, 0))
+    d2020 <- c(d2020, c(0, 0, 1))
+}
+CITYPANEL["d2018"] <- d2018
+CITYPANEL["d2019"] <- d2019
+CITYPANEL["d2020"] <- d2020
 ```
 ```{R}
 panelslr <- lm(CITYPANEL$wage2018 ~ CITYPANEL$workforceCollege_2018)
@@ -342,18 +356,30 @@ summary(replmiv)
 
 ## Independent pooling
 ```{R}
-ipplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018, model = "pooling", index = c("city", "year"))
+ipplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018 + d2018 + d2019 + d2020, model = "pooling", index = c("city", "year"))
 summary(ipplm)
 ```
 
-## Fixd effect
+## Fixed effect
 ```{R}
-ipplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018, model = "within", index = c("city", "year"))
-summary(ipplm)
+feplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018, model = "within", index = c("city", "year"))
+summary(feplm)
+```
+### with IV
+```{R}
+feplmivfs <- plm(data = CITYPANEL, 
+workforceCollege_2018 ~ workforceYoung_2013, model = "within", index = c("city", "year"))
+summary(feplmivfs)
+```
+```{R}
+feplmiv <- plm(data = CITYPANEL, 
+wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018 | 
+manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018 + workforceYoung_2013, model = "within", index = c("city", "year"))
+summary(feplmiv)
 ```
 
 ## First differenced
 ```{R}
-ipplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018, model = "fd", index = c("city", "year"))
-summary(ipplm)
+fdplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018, model = "fd", index = c("city", "year"))
+summary(fdplm)
 ```

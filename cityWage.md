@@ -243,7 +243,7 @@ summary(edu)
     ## Multiple R-squared:  0.5247, Adjusted R-squared:  0.4356 
     ## F-statistic: 5.889 on 3 and 16 DF,  p-value: 0.006598
 
-## Use college worker Share as main explanatory
+## Use college worker share as main explanatory
 
 ``` r
 mlr <- lm(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020, )
@@ -294,7 +294,7 @@ bptest(mlr)
 ``` r
 mlrrob <- lmrob(CITY$wage2020 ~ CITY$workforceCollege_2020 + CITY$direct + CITY$wage2018 + CITY$manufecture2020 + CITY$hired2020, )
 summary(mlrrob)
-#stargazer(mlr)
+#stargazer(mlrrob)
 ```
 
     ## 
@@ -395,7 +395,7 @@ summary(edulevelrob)
     ## Coefficients:
     ##                  Estimate Std. Error t value Pr(>|t|)    
     ## (Intercept)     -0.247533   1.673364  -0.148 0.884511    
-    ## direct          -0.106571   0.212692  -0.501 0.624115    
+    ## direct          -0.106571   0.212691  -0.501 0.624115    
     ## manufecture2020  0.008061   0.020700   0.389 0.702828    
     ## eduLevel2020     0.079934   0.015476   5.165 0.000143 ***
     ## hired2020       -0.017022   0.040925  -0.416 0.683768    
@@ -576,6 +576,7 @@ plot(workforceCollegeDiff, wageDiff)
 ``` r
 plm <- lm(wageDiff ~ workforceCollegeDiff + direct2 + serviceDiff + manufectDiff + hiredDiff)
 summary(plm)
+bptest(plm)
 plmrob <- lmrob(wageDiff ~ workforceCollegeDiff + direct2 + serviceDiff + manufectDiff + hiredDiff)
 summary(plmrob)
 ```
@@ -603,6 +604,12 @@ summary(plmrob)
     ## Residual standard error: 0.6564 on 34 degrees of freedom
     ## Multiple R-squared:  0.2483, Adjusted R-squared:  0.1377 
     ## F-statistic: 2.246 on 5 and 34 DF,  p-value: 0.07205
+    ## 
+    ## 
+    ##  studentized Breusch-Pagan test
+    ## 
+    ## data:  plm
+    ## BP = 10.138, df = 5, p-value = 0.07142
     ## 
     ## 
     ## Call:
@@ -828,7 +835,7 @@ for(row in 1:nrow(CITY)){
 ```
 
 ``` r
-CITYp <- CITY[-c(5, ncol(CITY))] #deleting those with only 2020 data
+CITYp <- CITY[-c(5, 103)] #deleting those with only 2020 data
 for(row in 1:nrow(CITYp)){
     t <- 3
     for(col in 1:ncol(CITYp)){
@@ -843,12 +850,26 @@ CITYPANEL["direct"] <- c(seq(1, 1, length.out=18), seq(0, 0, length.out=42))
 ```
 
 ``` r
+d2018 <- c(1, 0, 0)
+d2019 <- c(0, 1, 0)
+d2020 <- c(0, 0, 1)
+for(n in 1:19){
+    d2018 <- c(d2018, c(1, 0, 0))
+    d2019 <- c(d2019, c(0, 1, 0))
+    d2020 <- c(d2020, c(0, 0, 1))
+}
+CITYPANEL["d2018"] <- d2018
+CITYPANEL["d2019"] <- d2019
+CITYPANEL["d2020"] <- d2020
+```
+
+``` r
 panelslr <- lm(CITYPANEL$wage2018 ~ CITYPANEL$workforceCollege_2018)
 plot(CITYPANEL$workforceCollege_2018, CITYPANEL$wage2018, main="2018-2020 City Data", xlab="Share of college worker (%)", ylab="Average yearly wage ($10,000)")
 abline(panelslr)
 ```
 
-![](cityWage_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->
+![](cityWage_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->
 
 ## Random effect model
 
@@ -985,7 +1006,7 @@ summary(replmiv)
 ## Independent pooling
 
 ``` r
-ipplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018, model = "pooling", index = c("city", "year"))
+ipplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018 + d2018 + d2019 + d2020, model = "pooling", index = c("city", "year"))
 summary(ipplm)
 ```
 
@@ -993,38 +1014,41 @@ summary(ipplm)
     ## 
     ## Call:
     ## plm(formula = wage2018 ~ workforceCollege_2018 + manufecture2018 + 
-    ##     hired2018 + direct + directEdu2018 + expensePerCapita2018, 
-    ##     data = CITYPANEL, model = "pooling", index = c("city", "year"))
+    ##     hired2018 + direct + directEdu2018 + expensePerCapita2018 + 
+    ##     d2018 + d2019 + d2020, data = CITYPANEL, model = "pooling", 
+    ##     index = c("city", "year"))
     ## 
     ## Balanced Panel: n = 20, T = 3, N = 60
     ## 
     ## Residuals:
-    ##     Min.  1st Qu.   Median  3rd Qu.     Max. 
-    ## -11.0113  -2.8136   1.0773   3.7261  12.8858 
+    ##      Min.   1st Qu.    Median   3rd Qu.      Max. 
+    ## -11.45228  -2.81622   0.85849   4.00755  13.55480 
     ## 
-    ## Coefficients:
-    ##                          Estimate  Std. Error t-value  Pr(>|t|)    
-    ## (Intercept)           -4.2295e+00  9.6222e+00 -0.4396   0.66205    
-    ## workforceCollege_2018  6.8988e-02  1.5641e-01  0.4411   0.66096    
-    ## manufecture2018        4.2952e-01  1.0027e-01  4.2836 7.774e-05 ***
-    ## hired2018             -1.7864e-01  1.9046e-01 -0.9379   0.35254    
-    ## direct                -1.6099e+01  9.5491e+00 -1.6859   0.09769 .  
-    ## directEdu2018          1.5881e-01  1.7898e-01  0.8873   0.37893    
-    ## expensePerCapita2018   3.0668e-03  4.5762e-04  6.7017 1.362e-08 ***
+    ## Coefficients: (1 dropped because of singularities)
+    ##                          Estimate  Std. Error t-value Pr(>|t|)    
+    ## (Intercept)           -5.3509e+00  9.8334e+00 -0.5442 0.588705    
+    ## workforceCollege_2018  6.4682e-02  1.5845e-01  0.4082 0.684825    
+    ## manufecture2018        4.2797e-01  1.0153e-01  4.2152 0.000102 ***
+    ## hired2018             -1.8995e-01  1.9351e-01 -0.9816 0.330918    
+    ## direct                -1.5721e+01  9.6872e+00 -1.6228 0.110794    
+    ## directEdu2018          1.5022e-01  1.8169e-01  0.8268 0.412200    
+    ## expensePerCapita2018   3.1326e-03  4.7053e-04  6.6577 1.89e-08 ***
+    ## d2018                  1.4338e+00  1.8255e+00  0.7854 0.435838    
+    ## d2019                  1.2038e+00  1.8003e+00  0.6687 0.506723    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
     ## Total Sum of Squares:    7852.4
-    ## Residual Sum of Squares: 1658.9
-    ## R-Squared:      0.78874
-    ## Adj. R-Squared: 0.76483
-    ## F-statistic: 32.9801 on 6 and 53 DF, p-value: 3.1835e-16
+    ## Residual Sum of Squares: 1635.9
+    ## R-Squared:      0.79167
+    ## Adj. R-Squared: 0.75899
+    ## F-statistic: 24.225 on 8 and 51 DF, p-value: 7.5204e-15
 
-## Fixd effect
+## Fixed effect
 
 ``` r
-ipplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018, model = "within", index = c("city", "year"))
-summary(ipplm)
+feplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018, model = "within", index = c("city", "year"))
+summary(feplm)
 ```
 
     ## Oneway (individual) effect Within Model
@@ -1056,11 +1080,78 @@ summary(ipplm)
     ## Adj. R-Squared: 0.24327
     ## F-statistic: 8.59335 on 5 and 35 DF, p-value: 2.1812e-05
 
+### with IV
+
+``` r
+feplmivfs <- plm(data = CITYPANEL, 
+workforceCollege_2018 ~ workforceYoung_2013, model = "within", index = c("city", "year"))
+summary(feplmivfs)
+```
+
+    ## Oneway (individual) effect Within Model
+    ## 
+    ## Call:
+    ## plm(formula = workforceCollege_2018 ~ workforceYoung_2013, data = CITYPANEL, 
+    ##     model = "within", index = c("city", "year"))
+    ## 
+    ## Balanced Panel: n = 20, T = 3, N = 60
+    ## 
+    ## Residuals:
+    ##      Min.   1st Qu.    Median   3rd Qu.      Max. 
+    ## -2.702192 -0.538130 -0.048748  0.625257  3.075617 
+    ## 
+    ## Coefficients:
+    ##                     Estimate Std. Error t-value Pr(>|t|)
+    ## workforceYoung_2013  0.37808    0.57423  0.6584   0.5141
+    ## 
+    ## Total Sum of Squares:    71.022
+    ## Residual Sum of Squares: 70.241
+    ## R-Squared:      0.010994
+    ## Adj. R-Squared: -0.49619
+    ## F-statistic: 0.433514 on 1 and 39 DF, p-value: 0.51414
+
+``` r
+feplmiv <- plm(data = CITYPANEL, 
+wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018 | 
+manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018 + workforceYoung_2013, model = "within", index = c("city", "year"))
+summary(feplmiv)
+```
+
+    ## Oneway (individual) effect Within Model
+    ## Instrumental variable estimation
+    ## 
+    ## Call:
+    ## plm(formula = wage2018 ~ workforceCollege_2018 + manufecture2018 + 
+    ##     hired2018 + direct + directEdu2018 + expensePerCapita2018 | 
+    ##     manufecture2018 + hired2018 + direct + directEdu2018 + expensePerCapita2018 + 
+    ##         workforceYoung_2013, data = CITYPANEL, model = "within", 
+    ##     index = c("city", "year"))
+    ## 
+    ## Balanced Panel: n = 20, T = 3, N = 60
+    ## 
+    ## Residuals:
+    ##       Min.    1st Qu.     Median    3rd Qu.       Max. 
+    ## -2.7795273 -0.4924783 -0.0035068  0.5753146  1.8329435 
+    ## 
+    ## Coefficients:
+    ##                          Estimate  Std. Error z-value Pr(>|z|)
+    ## workforceCollege_2018  1.13128976  1.65555127  0.6833   0.4944
+    ## manufecture2018        0.26811106  0.84133370  0.3187   0.7500
+    ## hired2018             -0.35623851  0.77167393 -0.4616   0.6443
+    ## directEdu2018         -0.60487316  1.47876646 -0.4090   0.6825
+    ## expensePerCapita2018   0.00041607  0.00049436  0.8416   0.4000
+    ## 
+    ## Total Sum of Squares:    43.873
+    ## Residual Sum of Squares: 48.834
+    ## R-Squared:      0.36852
+    ## Adj. R-Squared: -0.064499
+    ## Chisq: 15.0983 on 5 DF, p-value: 0.0099504
+
 ## First differenced
 
 ``` r
-ipplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018, model = "fd", index = c("city", "year"))
-summary(ipplm)
+fdplm <- plm(data = CITYPANEL, wage2018 ~ workforceCollege_2018 + manufecture2018 + hired2018 + direct + directEdu2018, model = "fd", index = c("city", "year"))
+summary(fdplm)
 ```
 
     ## Oneway (individual) effect First-Difference Model
