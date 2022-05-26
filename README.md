@@ -11,3 +11,6 @@ All data used in this project are government data. [Datasets](/datasets.md)
 
 ## Primary Results
 - [Based on workplace wage by city](/cityWage.md)
+
+## Results Slide
+- [Beamer Repo](https://github.com/bencer3283/Beamer-Social-Return-of-Higher-Education)
